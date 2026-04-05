@@ -86,6 +86,40 @@ function _applyHeaders(sheet, headers) {
   });
 }
 
+// ── Fix phone format (เรียกผ่าน URL ครั้งเดียว) ───────────────
+function doGet() {
+  fixPhoneFormat();
+  return ContentService.createTextOutput('✅ Phone columns formatted as text!');
+}
+
+function fixPhoneFormat() {
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const textCols = {
+    'Registrations': ['เบอร์โทร', 'JAIFUL ID', 'LINE ID'],
+    'Members':       ['เบอร์โทร', 'JAIFUL ID', 'LINE ID'],
+  };
+
+  for (const [sheetName, cols] of Object.entries(textCols)) {
+    const sheet = ss.getSheetByName(sheetName);
+    if (!sheet) continue;
+    const headers = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
+    cols.forEach(col => {
+      const idx = headers.indexOf(col);
+      if (idx >= 0) {
+        sheet.getRange(1, idx + 1, sheet.getMaxRows(), 1).setNumberFormat('@');
+        // Re-write existing phone values as text (to restore leading zeros)
+        const lastRow = sheet.getLastRow();
+        if (lastRow > 1) {
+          const vals = sheet.getRange(2, idx + 1, lastRow - 1, 1).getValues();
+          const fixed = vals.map(([v]) => [v ? String(v).padStart(col === 'เบอร์โทร' ? 10 : 0, '') : '']);
+          sheet.getRange(2, idx + 1, lastRow - 1, 1).setValues(fixed);
+        }
+      }
+    });
+  }
+  Logger.log('✅ Done!');
+}
+
 // ── Webhook receiver ──────────────────────────────────────────
 function doPost(e) {
   try {

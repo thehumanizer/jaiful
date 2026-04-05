@@ -374,8 +374,13 @@
           <span class="hint">(สำหรับทีมติดต่อกลับ)</span>
         </label>
         <input type="tel" class="form-input" id="phone"
-          placeholder="0812345678" maxlength="10" autocomplete="tel">
+          placeholder="0812345678" maxlength="10" autocomplete="tel"
+          onblur="checkPhoneDuplicate(this.value)">
         <div class="form-error" id="err-phone">กรุณากรอกเบอร์โทรที่ถูกต้อง</div>
+        <div id="phone-duplicate-warning" style="display:none; margin-top:0.5rem;
+          background:rgba(224,82,82,0.08); border:1.5px solid rgba(224,82,82,0.3);
+          border-radius:8px; padding:0.75rem 1rem; font-size:0.84rem; color:#b83232;">
+        </div>
       </div>
 
       <div class="form-group">
@@ -777,11 +782,83 @@ async function lookupUser() {
   }
 }
 
+async function checkPhoneDuplicate(rawPhone) {
+  const phone = rawPhone.trim().replace(/\D/g, '');
+  if (phone.length < 9) return;
+
+  // ถ้าผ่าน lookup box มาแล้ว ไม่ต้องเช็คซ้ำ
+  if (state.existingJaifulId) return;
+
+  const warn = document.getElementById('phone-duplicate-warning');
+
+  const { data: member } = await db
+    .from('members')
+    .select('jaiful_id, full_name, nickname')
+    .eq('phone', phone)
+    .maybeSingle();
+
+  if (!member) { warn.style.display = 'none'; return; }
+
+  const { data: reg } = await db
+    .from('registrations')
+    .select('reg_id, status, created_at')
+    .eq('jaiful_id', member.jaiful_id)
+    .eq('workshop_id', 'claude-123')
+    .maybeSingle();
+
+  if (!reg) {
+    // มี member แต่ยังไม่มี registration — แค่โหลดข้อมูลให้
+    state.existingJaifulId = member.jaiful_id;
+    state.existingRegistration = null;
+    state.confirmedDuplicate = false;
+    document.getElementById('full-name').value = member.full_name || '';
+    document.getElementById('nickname').value  = member.nickname || '';
+    warn.style.display = 'none';
+    showToast(`เจอข้อมูล ${member.nickname || member.full_name} — โหลดข้อมูลให้แล้ว`);
+    return;
+  }
+
+  // มีทั้ง member และ registration
+  state.existingJaifulId   = member.jaiful_id;
+  state.existingRegistration = reg;
+  state.confirmedDuplicate  = false;
+
+  const regDate = new Date(reg.created_at).toLocaleDateString('th-TH', { day: 'numeric', month: 'long', year: 'numeric' });
+  const statusLabel = {
+    interested: 'สนใจ (รอติดต่อกลับ)', registered: 'สมัครแล้ว',
+    confirmed: 'ยืนยันแล้ว ✅', attended: 'เข้าร่วมแล้ว ✅', cancelled: 'ยกเลิก',
+  }[reg.status] || reg.status;
+
+  warn.style.display = 'block';
+  warn.innerHTML = `
+    ⚠️ เบอร์นี้มีการสมัคร Claude 123 อยู่แล้ว (<strong>${member.nickname || member.full_name}</strong>)<br>
+    <span style="font-size:0.8rem; opacity:0.85;">สมัครเมื่อ ${regDate} · สถานะ: ${statusLabel}</span><br>
+    <span style="font-size:0.82rem;">ต้องการอัปเดตการสมัครเดิมหรือเปล่า?</span>
+    <div class="duplicate-confirm-btns">
+      <button class="btn-confirm-update" onclick="confirmDuplicateUpdate()">ใช่ อัปเดตเลย</button>
+      <button class="btn-cancel-update" onclick="cancelPhoneDuplicate()">ไม่ใช่</button>
+    </div>`;
+}
+
+function cancelPhoneDuplicate() {
+  state.existingJaifulId    = null;
+  state.existingRegistration = null;
+  state.confirmedDuplicate  = false;
+  document.getElementById('phone').value = '';
+  document.getElementById('phone-duplicate-warning').style.display = 'none';
+}
+
 function confirmDuplicateUpdate() {
   state.confirmedDuplicate = true;
-  const result = document.getElementById('lookup-result');
-  result.className = 'lookup-result found';
-  result.innerHTML = `✅ รับทราบแล้ว — จะอัปเดตการสมัครเดิมของคุณ ตรวจสอบข้อมูลด้านล่างแล้วดำเนินการต่อได้เลย`;
+  // ปิด warning ทั้งสองจุด (lookup box + phone field)
+  const lookupResult = document.getElementById('lookup-result');
+  if (lookupResult.classList.contains('duplicate')) {
+    lookupResult.className = 'lookup-result found';
+    lookupResult.innerHTML = `✅ รับทราบแล้ว — จะอัปเดตการสมัครเดิมของคุณ ตรวจสอบข้อมูลด้านล่างแล้วดำเนินการต่อได้เลย`;
+  }
+  const phoneWarn = document.getElementById('phone-duplicate-warning');
+  if (phoneWarn) phoneWarn.style.display = 'none';
+  showToast('✅ รับทราบแล้ว — ดำเนินการต่อได้เลย');
 }
 
 function cancelDuplicateUpdate() {

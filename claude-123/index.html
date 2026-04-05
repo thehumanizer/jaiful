@@ -827,22 +827,6 @@ async function _checkFieldDuplicate(field, value, warnId, onCancel) {
   state.existingRegistration = reg || null;
   state.confirmedDuplicate  = false;
 
-  if (!reg) {
-    // มี member แต่ยังไม่มี registration — โหลดข้อมูลให้เงียบๆ
-    document.getElementById('full-name').value = member.full_name || '';
-    document.getElementById('nickname').value  = member.nickname  || '';
-    warn.style.display = 'none';
-    showToast(`เจอข้อมูล ${member.nickname || member.full_name} — โหลดให้แล้ว ✅`);
-    return;
-  }
-
-  // มีทั้ง member และ registration → ต้อง confirm
-  const regDate = new Date(reg.created_at).toLocaleDateString('th-TH', { day: 'numeric', month: 'long', year: 'numeric' });
-  const statusLabel = {
-    interested: 'สนใจ (รอติดต่อกลับ)', registered: 'สมัครแล้ว',
-    confirmed: 'ยืนยันแล้ว ✅', attended: 'เข้าร่วมแล้ว ✅', cancelled: 'ยกเลิก',
-  }[reg.status] || reg.status;
-
   const cancelFnName = `_cancelWarn_${warnId.replace(/-/g,'_')}`;
   window[cancelFnName] = () => {
     state.existingJaifulId    = null;
@@ -851,14 +835,36 @@ async function _checkFieldDuplicate(field, value, warnId, onCancel) {
     onCancel();
   };
 
+  const displayName = member.nickname || member.full_name;
+
+  if (!reg) {
+    // มี member แต่ยังไม่มี registration → ถามว่านี่คือคุณไหม (ไม่ overwrite ข้อมูลที่พิมพ์ไว้)
+    warn.style.display = 'block';
+    warn.innerHTML = `
+      ℹ️ เราเจอ${field === 'email' ? 'อีเมล' : 'เบอร์'}นี้ในระบบแล้ว — <strong>${displayName}</strong><br>
+      <span style="font-size:0.82rem;">นี่คือคุณไหม? ถ้าใช่จะ link กับบัญชีเดิมให้เลย</span>
+      <div class="duplicate-confirm-btns">
+        <button class="btn-confirm-update" onclick="confirmDuplicateUpdate()">ใช่ นี่คือฉัน</button>
+        <button class="btn-cancel-update" onclick="${cancelFnName}()">ไม่ใช่ เปลี่ยน${field === 'email' ? 'อีเมล' : 'เบอร์'}</button>
+      </div>`;
+    return;
+  }
+
+  // มีทั้ง member และ registration → ต้อง confirm การ update
+  const regDate = new Date(reg.created_at).toLocaleDateString('th-TH', { day: 'numeric', month: 'long', year: 'numeric' });
+  const statusLabel = {
+    interested: 'สนใจ (รอติดต่อกลับ)', registered: 'สมัครแล้ว',
+    confirmed: 'ยืนยันแล้ว ✅', attended: 'เข้าร่วมแล้ว ✅', cancelled: 'ยกเลิก',
+  }[reg.status] || reg.status;
+
   warn.style.display = 'block';
   warn.innerHTML = `
-    ⚠️ ${field === 'email' ? 'อีเมลนี้' : 'เบอร์นี้'}มีการสมัคร Claude 123 อยู่แล้ว (<strong>${member.nickname || member.full_name}</strong>)<br>
+    ⚠️ ${field === 'email' ? 'อีเมลนี้' : 'เบอร์นี้'}มีการสมัคร Claude 123 อยู่แล้ว (<strong>${displayName}</strong>)<br>
     <span style="font-size:0.8rem; opacity:0.85;">สมัครเมื่อ ${regDate} · สถานะ: ${statusLabel}</span><br>
     <span style="font-size:0.82rem;">ต้องการอัปเดตการสมัครเดิมหรือเปล่า?</span>
     <div class="duplicate-confirm-btns">
       <button class="btn-confirm-update" onclick="confirmDuplicateUpdate()">ใช่ อัปเดตเลย</button>
-      <button class="btn-cancel-update" onclick="${cancelFnName}()">ไม่ใช่</button>
+      <button class="btn-cancel-update" onclick="${cancelFnName}()">ไม่ใช่ เปลี่ยน${field === 'email' ? 'อีเมล' : 'เบอร์'}</button>
     </div>`;
 }
 

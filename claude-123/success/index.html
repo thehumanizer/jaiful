@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>สมัครสำเร็จ! 🪽 — JAIFUL</title>
+  <link rel="stylesheet" href="../../css/styles.css">
+  <style>
+    body {
+      background: linear-gradient(160deg, #1e3f57 0%, #2D5A7B 70%);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .page-header {
+      padding: 1.25rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      text-decoration: none;
+    }
+
+    .logo-mark {
+      width: 32px;
+      height: 32px;
+      background: var(--gold);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 0.8rem;
+      color: var(--blue-dark);
+    }
+
+    .logo-name {
+      font-weight: 800;
+      font-size: 1.1rem;
+      color: white;
+      letter-spacing: 1px;
+    }
+
+    /* ── Main content ── */
+    .success-wrap {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 1.5rem 4rem;
+    }
+
+    .success-card {
+      background: white;
+      border-radius: 28px;
+      padding: 2.5rem 2rem;
+      max-width: 520px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+      animation: card-in 0.5s ease;
+    }
+
+    @keyframes card-in {
+      from { opacity: 0; transform: translateY(24px) scale(0.97); }
+      to   { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    /* ── Confetti wing ── */
+    .wing-wrap {
+      font-size: 5rem;
+      margin-bottom: 0.5rem;
+      animation: wing-flap 0.6s ease 0.3s both;
+      display: block;
+    }
+
+    @keyframes wing-flap {
+      0%   { transform: scale(0.5) rotate(-10deg); opacity: 0; }
+      60%  { transform: scale(1.15) rotate(5deg); }
+      100% { transform: scale(1) rotate(0); opacity: 1; }
+    }
+
+    .success-tag {
+      display: inline-block;
+      background: rgba(76,175,125,0.12);
+      color: var(--green-dark);
+      font-weight: 700;
+      font-size: 0.85rem;
+      padding: 0.35rem 1rem;
+      border-radius: 999px;
+      margin-bottom: 1rem;
+      letter-spacing: 0.5px;
+    }
+
+    .success-title {
+      font-size: 1.75rem;
+      font-weight: 900;
+      color: var(--blue-dark);
+      margin-bottom: 0.5rem;
+    }
+
+    .success-sub {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      margin-bottom: 1.75rem;
+      line-height: 1.7;
+    }
+
+    /* ── JAIFUL ID chip ── */
+    .jaiful-id-box {
+      background: linear-gradient(135deg, #1e3f57, #2D5A7B);
+      border-radius: var(--radius-md);
+      padding: 1.25rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .jaiful-id-label {
+      font-size: 0.75rem;
+      color: rgba(255,255,255,0.5);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 0.4rem;
+    }
+
+    .jaiful-id-value {
+      font-size: 1.4rem;
+      font-weight: 900;
+      color: var(--gold);
+      letter-spacing: 2px;
+    }
+
+    .jaiful-id-sub {
+      font-size: 0.8rem;
+      color: rgba(255,255,255,0.5);
+      margin-top: 0.3rem;
+    }
+
+    /* ── Next steps ── */
+    .next-steps {
+      text-align: left;
+      background: var(--warm-white);
+      border-radius: var(--radius-md);
+      padding: 1.25rem;
+      margin-bottom: 1.75rem;
+    }
+
+    .next-steps-title {
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-muted);
+      margin-bottom: 0.875rem;
+    }
+
+    .next-step-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.875rem;
+      padding: 0.625rem 0;
+      border-bottom: 1px solid var(--warm-gray);
+    }
+
+    .next-step-item:last-child { border-bottom: none; }
+
+    .step-num {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: var(--blue);
+      color: white;
+      font-size: 0.75rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .step-num.done {
+      background: var(--green);
+    }
+
+    .step-text { font-size: 0.9rem; }
+    .step-text strong { display: block; font-weight: 600; color: var(--text); }
+    .step-text span { color: var(--text-muted); font-size: 0.85rem; }
+
+    /* ── Status: pay vs interest ── */
+    .status-banner {
+      border-radius: var(--radius-md);
+      padding: 1rem 1.25rem;
+      margin-bottom: 1.5rem;
+      text-align: left;
+      display: flex;
+      gap: 0.875rem;
+      align-items: flex-start;
+    }
+
+    .status-banner.pay {
+      background: rgba(76,175,125,0.1);
+      border: 1px solid rgba(76,175,125,0.25);
+    }
+
+    .status-banner.interest {
+      background: rgba(232,168,56,0.1);
+      border: 1px solid rgba(232,168,56,0.25);
+    }
+
+    .status-banner-icon { font-size: 1.4rem; flex-shrink: 0; margin-top: 2px; }
+
+    .status-banner-text strong {
+      display: block;
+      font-size: 0.95rem;
+      color: var(--text);
+      margin-bottom: 0.25rem;
+    }
+
+    .status-banner-text span {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    /* ── Share section ── */
+    .share-section {
+      border-top: 1px solid var(--warm-gray);
+      padding-top: 1.5rem;
+      margin-top: 1.5rem;
+    }
+
+    .share-title {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-bottom: 1rem;
+    }
+
+    .share-btns {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+  </style>
+</head>
+<body>
+
+<header class="page-header">
+  <a href="/" class="logo">
+    <div class="logo-mark">JF</div>
+    <span class="logo-name">JAIFUL</span>
+  </a>
+</header>
+
+<main class="success-wrap">
+  <div class="success-card">
+
+    <span class="wing-wrap">🪽</span>
+    <div class="success-tag">✅ สมัครสำเร็จ</div>
+
+    <h1 class="success-title" id="greeting-title">ยินดีต้อนรับ!</h1>
+    <p class="success-sub" id="greeting-sub">
+      คุณเป็นส่วนหนึ่งของ JAIFUL Family แล้ว 🎉
+    </p>
+
+    <!-- JAIFUL ID -->
+    <div class="jaiful-id-box" id="jaiful-id-box">
+      <div class="jaiful-id-label">JAIFUL ID ของคุณ</div>
+      <div class="jaiful-id-value" id="jaiful-id-display">—</div>
+      <div class="jaiful-id-sub">บันทึกไว้นะ — ใช้สมัคร workshop ครั้งหน้าได้เลย</div>
+    </div>
+
+    <!-- Status banner (pay vs interest) -->
+    <div class="status-banner pay hidden" id="banner-pay">
+      <span class="status-banner-icon">💳</span>
+      <div class="status-banner-text">
+        <strong>รับสลิปแล้ว — รอ confirm 24 ชั่วโมง</strong>
+        <span>ทีมจะตรวจสอบและส่งยืนยันกลับหาคุณ ขอบคุณที่เชื่อใจ JAIFUL นะ 🙏</span>
+      </div>
+    </div>
+
+    <div class="status-banner interest hidden" id="banner-interest">
+      <span class="status-banner-icon">📞</span>
+      <div class="status-banner-text">
+        <strong>รับทราบแล้ว — ทีมจะโทรหาคุณเร็วๆ นี้</strong>
+        <span>ภายใน 1 วันทำการ เราจะติดต่อกลับเพื่อให้ข้อมูลเพิ่มเติมและยืนยันที่นั่ง</span>
+      </div>
+    </div>
+
+    <!-- Next steps -->
+    <div class="next-steps" id="next-steps-pay" style="display:none;">
+      <div class="next-steps-title">ขั้นตอนถัดไป</div>
+
+      <div class="next-step-item">
+        <div class="step-num done">✓</div>
+        <div class="step-text">
+          <strong>กรอกฟอร์มและ upload สลิป</strong>
+          <span>เสร็จแล้ว!</span>
+        </div>
+      </div>
+
+      <div class="next-step-item">
+        <div class="step-num">2</div>
+        <div class="step-text">
+          <strong>ทีม confirm การชำระเงิน</strong>
+          <span>ภายใน 24 ชั่วโมง คุณจะได้รับการยืนยันทาง email</span>
+        </div>
+      </div>
+
+      <div class="next-step-item">
+        <div class="step-num">3</div>
+        <div class="step-text">
+          <strong>รับรายละเอียด workshop</strong>
+          <span>สถานที่ เวลา และ checklist เตรียมตัว</span>
+        </div>
+      </div>
+
+      <div class="next-step-item">
+        <div class="step-num">4</div>
+        <div class="step-text">
+          <strong>เจอกัน workshop วัน D! 🪽</strong>
+          <span>เตรียม notebook + ความอยากรู้มาเลย ที่เหลือเราดูแลให้</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="next-steps" id="next-steps-interest" style="display:none;">
+      <div class="next-steps-title">ขั้นตอนถัดไป</div>
+
+      <div class="next-step-item">
+        <div class="step-num done">✓</div>
+        <div class="step-text">
+          <strong>แจ้งความสนใจแล้ว</strong>
+          <span>เราได้รับข้อมูลของคุณแล้ว</span>
+        </div>
+      </div>
+
+      <div class="next-step-item">
+        <div class="step-num">2</div>
+        <div class="step-text">
+          <strong>ทีมโทรหาคุณ</strong>
+          <span>ภายใน 1 วันทำการ เพื่อให้ข้อมูลและตอบคำถาม</span>
+        </div>
+      </div>
+
+      <div class="next-step-item">
+        <div class="step-num">3</div>
+        <div class="step-text">
+          <strong>โอนเงินและยืนยันที่นั่ง</strong>
+          <span>เมื่อพร้อม — ทีมจะส่งข้อมูลบัญชีให้</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- CTA buttons -->
+    <div style="display:flex; flex-direction:column; gap:0.75rem; margin-bottom:1.25rem;">
+      <a href="/" class="btn btn-blue btn-full">
+        กลับหน้าแรก JAIFUL
+      </a>
+    </div>
+
+    <!-- Share -->
+    <div class="share-section">
+      <p class="share-title">ชวนเพื่อนมาเรียนด้วยกัน 😊</p>
+      <div class="share-btns">
+        <button class="btn btn-secondary btn-sm" onclick="copyLink()">
+          🔗 คัดลอกลิงก์
+        </button>
+        <a href="https://line.me/R/share?text=สมัคร+Claude+123+workshop+กัน!+%0ahttps://jaiful.web.app/claude-123"
+           target="_blank" rel="noopener"
+           class="btn btn-sm" style="background:#00B900; color:white;">
+          💬 แชร์ใน LINE
+        </a>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<div id="toast-container"></div>
+
+<script src="../../js/config.js"></script>
+<script>
+  // ── Read URL params ──
+  const params = new URLSearchParams(window.location.search);
+  const name      = params.get('name') || 'คุณ';
+  const jaifulId  = params.get('jaiful_id') || '—';
+  const status    = params.get('status') || 'interest'; // 'pay' | 'interest'
+
+  // ── Set greeting ──
+  document.getElementById('greeting-title').textContent = `ยินดีต้อนรับ, ${name}! 🎉`;
+  document.getElementById('jaiful-id-display').textContent = jaifulId;
+
+  if (status === 'pay') {
+    document.getElementById('greeting-sub').textContent =
+      'เราได้รับสลิปของคุณแล้ว ทีมจะ confirm ภายใน 24 ชั่วโมง';
+    document.getElementById('banner-pay').classList.remove('hidden');
+    document.getElementById('next-steps-pay').style.display = 'block';
+  } else {
+    document.getElementById('greeting-sub').textContent =
+      'เราได้รับความสนใจของคุณแล้ว ทีมจะติดต่อกลับเร็วๆ นี้';
+    document.getElementById('banner-interest').classList.remove('hidden');
+    document.getElementById('next-steps-interest').style.display = 'block';
+  }
+
+  // ── Copy link ──
+  function copyLink() {
+    const url = 'https://jaiful.web.app/claude-123';
+    navigator.clipboard.writeText(url).then(() => {
+      showToast('คัดลอกลิงก์แล้ว!', 'success');
+    }).catch(() => {
+      showToast('คัดลอกด้วยตัวเองนะ: jaiful.web.app/claude-123');
+    });
+  }
+
+  // ── Toast ──
+  function showToast(msg, type = '') {
+    const container = document.getElementById('toast-container');
+    const el = document.createElement('div');
+    el.className = `toast ${type}`;
+    el.textContent = msg;
+    container.appendChild(el);
+    setTimeout(() => el.remove(), 4000);
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,1254 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>สมัคร Claude 123 🪽 — JAIFUL</title>
+  <meta name="description" content="สมัคร Claude 123 workshop โดย JAIFUL มาเปลี่ยน 'งง' เป็น 'ง่าย' ไปด้วยกัน">
+  <link rel="stylesheet" href="../css/styles.css">
+  <style>
+    body { background: var(--warm-white); }
+
+    /* ── Page layout ── */
+    .page-header {
+      background: linear-gradient(135deg, #1e3f57, #2D5A7B);
+      padding: 1.25rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .page-header .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      text-decoration: none;
+    }
+
+    .logo-mark {
+      width: 32px;
+      height: 32px;
+      background: var(--gold);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 0.8rem;
+      color: var(--blue-dark);
+    }
+
+    .logo-name {
+      font-weight: 800;
+      font-size: 1.1rem;
+      color: white;
+      letter-spacing: 1px;
+    }
+
+    .workshop-pill {
+      background: rgba(232,168,56,0.2);
+      border: 1px solid rgba(232,168,56,0.4);
+      color: var(--gold-light);
+      font-size: 0.8rem;
+      font-weight: 700;
+      padding: 0.3rem 0.75rem;
+      border-radius: 999px;
+    }
+
+    /* ── Form area ── */
+    .form-area {
+      padding: 2rem 1.5rem 4rem;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .form-intro {
+      text-align: center;
+      margin-bottom: 1.75rem;
+    }
+
+    .form-intro h1 {
+      font-size: 1.6rem;
+      color: var(--blue-dark);
+      margin-bottom: 0.4rem;
+    }
+
+    .form-intro p {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+    }
+
+    /* ── Step content ── */
+    .step-content {
+      display: none;
+      animation: fade-in-up 0.3s ease;
+    }
+
+    .step-content.active { display: block; }
+
+    @keyframes fade-in-up {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .step-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--blue-dark);
+      margin-bottom: 0.35rem;
+    }
+
+    .step-subtitle {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      margin-bottom: 1.5rem;
+    }
+
+    /* ── Returning user lookup ── */
+    .lookup-box {
+      background: rgba(45,90,123,0.05);
+      border: 1.5px solid rgba(45,90,123,0.15);
+      border-radius: var(--radius-md);
+      padding: 1rem 1.25rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .lookup-box .lookup-label {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--blue);
+      margin-bottom: 0.6rem;
+    }
+
+    .lookup-row {
+      display: flex;
+      gap: 0.75rem;
+    }
+
+    .lookup-row .form-input { flex: 1; }
+
+    .lookup-result {
+      margin-top: 0.75rem;
+      font-size: 0.875rem;
+      padding: 0.75rem 1rem;
+      border-radius: var(--radius-sm);
+      display: none;
+    }
+
+    .lookup-result.found {
+      background: rgba(76,175,125,0.1);
+      color: var(--green-dark);
+      display: block;
+    }
+
+    .lookup-result.not-found {
+      background: rgba(232,168,56,0.1);
+      color: #8a5e10;
+      display: block;
+    }
+
+    /* ── Payment option cards ── */
+    .payment-options {
+      display: flex;
+      flex-direction: column;
+      gap: 0.875rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .payment-option {
+      border: 2px solid var(--warm-gray);
+      border-radius: var(--radius-md);
+      padding: 1.25rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      background: white;
+    }
+
+    .payment-option:hover {
+      border-color: var(--blue-light);
+    }
+
+    .payment-option.selected {
+      border-color: var(--blue);
+      background: rgba(45,90,123,0.04);
+    }
+
+    .payment-option-header {
+      display: flex;
+      align-items: center;
+      gap: 0.875rem;
+    }
+
+    .payment-option-radio {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      border: 2px solid var(--warm-gray);
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s;
+    }
+
+    .payment-option.selected .payment-option-radio {
+      border-color: var(--blue);
+      background: var(--blue);
+    }
+
+    .payment-option.selected .payment-option-radio::after {
+      content: '';
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: white;
+    }
+
+    .payment-option-icon { font-size: 1.5rem; }
+
+    .payment-option-title {
+      font-weight: 700;
+      font-size: 1rem;
+      color: var(--text);
+    }
+
+    .payment-option-sub {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-top: 0.15rem;
+    }
+
+    .payment-option-body {
+      margin-top: 1.25rem;
+      display: none;
+    }
+
+    .payment-option.selected .payment-option-body {
+      display: block;
+    }
+
+    /* ── Nav buttons ── */
+    .form-nav {
+      display: flex;
+      gap: 0.875rem;
+      margin-top: 2rem;
+    }
+
+    .form-nav .btn-back {
+      flex: 0 0 auto;
+    }
+
+    .form-nav .btn-next {
+      flex: 1;
+    }
+
+    /* ── Summary box (step 4 review) ── */
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      padding: 0.6rem 0;
+      border-bottom: 1px solid var(--warm-gray);
+      font-size: 0.9rem;
+      gap: 0.75rem;
+    }
+
+    .summary-row:last-child { border-bottom: none; }
+    .summary-label { color: var(--text-muted); flex-shrink: 0; }
+    .summary-value { font-weight: 600; text-align: right; }
+
+    /* ── Submission overlay ── */
+    .submit-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(30,63,87,0.92);
+      z-index: 9999;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 1.25rem;
+      color: white;
+      text-align: center;
+      padding: 2rem;
+    }
+
+    .submit-overlay.active { display: flex; }
+
+    .submit-overlay .big-spinner {
+      width: 56px;
+      height: 56px;
+      border: 4px solid rgba(255,255,255,0.2);
+      border-top-color: var(--gold);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="page-header">
+  <a href="/" class="logo">
+    <div class="logo-mark">JF</div>
+    <span class="logo-name">JAIFUL</span>
+  </a>
+  <span class="workshop-pill">Claude 123 🪽</span>
+</header>
+
+<!-- FORM AREA -->
+<main class="form-area">
+
+  <!-- Intro -->
+  <div class="form-intro">
+    <h1>สมัครเลย 🎉</h1>
+    <p>กรอกข้อมูลง่ายๆ 4 ขั้น ใช้เวลาไม่เกิน 3 นาที</p>
+  </div>
+
+  <!-- Progress -->
+  <div class="progress-wrap card" style="padding: 1.25rem; margin-bottom: 1.5rem;">
+    <div class="progress-steps">
+      <div class="step-dot active" id="dot-1">1</div>
+      <div class="step-line" id="line-1"></div>
+      <div class="step-dot" id="dot-2">2</div>
+      <div class="step-line" id="line-2"></div>
+      <div class="step-dot" id="dot-3">3</div>
+      <div class="step-line" id="line-3"></div>
+      <div class="step-dot" id="dot-4">4</div>
+    </div>
+    <p class="progress-label" id="progress-label">
+      ขั้น <strong>1</strong> จาก 4 — ข้อมูลส่วนตัว
+    </p>
+  </div>
+
+  <!-- ════════════════════════════════════════
+       STEP 1 — ข้อมูลพื้นฐาน
+       ════════════════════════════════════════ -->
+  <div class="step-content active" id="step-1">
+    <div class="card">
+      <h2 class="step-title">ข้อมูลส่วนตัว</h2>
+      <p class="step-subtitle">เราจะเก็บข้อมูลนี้ไว้ใน JAIFUL เพื่อไม่ต้องกรอกซ้ำครั้งหน้า</p>
+
+      <!-- Returning user lookup -->
+      <div class="lookup-box">
+        <div class="lookup-label">🔍 เคยสมัคร JAIFUL มาก่อนไหม? ใส่เบอร์ ข้อมูลขึ้นเลย</div>
+        <div class="lookup-row">
+          <input type="tel" class="form-input" id="lookup-phone"
+            placeholder="เบอร์โทร เช่น 0812345678" maxlength="10">
+          <button class="btn btn-blue btn-sm" id="btn-lookup" type="button">ค้นหา</button>
+        </div>
+        <div class="lookup-result" id="lookup-result"></div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="full-name">
+          ชื่อ-นามสกุล <span class="required">*</span>
+        </label>
+        <input type="text" class="form-input" id="full-name"
+          placeholder="เช่น สมชาย ใจดี" autocomplete="name">
+        <div class="form-error" id="err-full-name">กรุณากรอกชื่อ-นามสกุล</div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="nickname">
+          ชื่อเล่น <span class="required">*</span>
+        </label>
+        <input type="text" class="form-input" id="nickname"
+          placeholder="เช่น โบ๊ท" autocomplete="nickname">
+        <div class="form-error" id="err-nickname">กรุณากรอกชื่อเล่น</div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="phone">
+          เบอร์โทรศัพท์ <span class="required">*</span>
+          <span class="hint">(สำหรับทีมติดต่อกลับ)</span>
+        </label>
+        <input type="tel" class="form-input" id="phone"
+          placeholder="0812345678" maxlength="10" autocomplete="tel">
+        <div class="form-error" id="err-phone">กรุณากรอกเบอร์โทรที่ถูกต้อง</div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="email">
+          Email <span class="required">*</span>
+        </label>
+        <input type="email" class="form-input" id="email"
+          placeholder="you@example.com" autocomplete="email">
+        <div class="form-error" id="err-email">กรุณากรอก email ที่ถูกต้อง</div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="line-id">
+          LINE ID
+          <span class="hint">(ถ้ามี)</span>
+        </label>
+        <input type="text" class="form-input" id="line-id"
+          placeholder="เช่น @somchai">
+      </div>
+
+      <div class="form-nav" style="flex-wrap: wrap; gap: 0.75rem;">
+        <button class="btn btn-ghost btn-sm" id="btn-clear-form" type="button"
+          style="flex: 0 0 auto; color: var(--text-muted); font-size: 0.85rem;">
+          🗑 ล้างข้อมูล
+        </button>
+        <button class="btn btn-blue btn-next" id="btn-step1-next" type="button" style="flex: 1;">
+          ถัดไป →
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════
+       STEP 2 — ข้อมูลงาน
+       ════════════════════════════════════════ -->
+  <div class="step-content" id="step-2">
+    <div class="card">
+      <h2 class="step-title">ข้อมูลการทำงาน</h2>
+      <p class="step-subtitle">เพื่อให้เราปรับ workshop ให้ตรงกับงานของคุณมากที่สุด</p>
+
+      <!-- Freelance toggle -->
+      <div style="margin-bottom: 1.25rem;">
+        <label style="display:flex; align-items:center; gap:0.625rem; cursor:pointer; user-select:none;">
+          <input type="checkbox" id="is-freelance" style="width:18px; height:18px; cursor:pointer; accent-color:var(--blue);">
+          <span style="font-size:0.95rem; font-weight:600; color:var(--text);">ฟรีแลนซ์ / ส่วนตัว</span>
+        </label>
+        <p style="font-size:0.82rem; color:var(--text-muted); margin-top:0.3rem; margin-left:26px;">
+          เลือกถ้าไม่ได้ทำงานประจำในองค์กร
+        </p>
+      </div>
+
+      <div class="form-group" id="group-company">
+        <label class="form-label" for="company" id="label-company">
+          บริษัท / องค์กร <span class="required" id="req-company">*</span>
+        </label>
+        <input type="text" class="form-input" id="company"
+          placeholder="เช่น บริษัท ABC จำกัด" autocomplete="organization">
+        <div class="form-error" id="err-company">กรุณากรอกชื่อบริษัทหรือองค์กร</div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="position" id="label-position">
+          ตำแหน่ง <span class="required">*</span>
+        </label>
+        <input type="text" class="form-input" id="position"
+          placeholder="เช่น Marketing Manager" autocomplete="organization-title">
+        <div class="form-error" id="err-position">กรุณากรอกตำแหน่ง</div>
+      </div>
+
+      <div class="form-nav">
+        <button class="btn btn-ghost btn-back" id="btn-step2-back" type="button">← ย้อนกลับ</button>
+        <button class="btn btn-blue btn-next" id="btn-step2-next" type="button">ถัดไป →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════
+       STEP 3 — Pre-course survey
+       ════════════════════════════════════════ -->
+  <div class="step-content" id="step-3">
+    <div class="card">
+      <h2 class="step-title">แบบสำรวจก่อนเรียน</h2>
+      <p class="step-subtitle">ช่วยให้เราเตรียม workshop ให้เหมาะกับคุณมากขึ้น (ไม่มีคำตอบผิด)</p>
+
+      <!-- Survey questions will be rendered here by JS -->
+      <div id="survey-container">
+        <div style="text-align:center; padding:2rem 0;">
+          <div class="spinner spinner-blue"></div>
+          <p class="text-muted mt-2" style="font-size:0.9rem;">กำลังโหลดคำถาม...</p>
+        </div>
+      </div>
+
+      <div class="form-nav">
+        <button class="btn btn-ghost btn-back" id="btn-step3-back" type="button">← ย้อนกลับ</button>
+        <button class="btn btn-blue btn-next" id="btn-step3-next" type="button">ถัดไป →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════
+       STEP 4 — Payment
+       ════════════════════════════════════════ -->
+  <div class="step-content" id="step-4">
+    <div class="card">
+      <h2 class="step-title">ขั้นสุดท้าย 🎉</h2>
+      <p class="step-subtitle">เลือกว่าจะดำเนินการต่อยังไง</p>
+
+      <!-- Summary -->
+      <div style="background:var(--warm-white); border-radius:var(--radius-md); padding:1rem 1.25rem; margin-bottom:1.5rem;">
+        <p style="font-size:0.8rem; font-weight:700; color:var(--text-muted); margin-bottom:0.75rem; text-transform:uppercase; letter-spacing:0.5px;">สรุปข้อมูล</p>
+        <div class="summary-row">
+          <span class="summary-label">ชื่อ-นามสกุล</span>
+          <span class="summary-value" id="sum-name">—</span>
+        </div>
+        <div class="summary-row">
+          <span class="summary-label">เบอร์โทร</span>
+          <span class="summary-value" id="sum-phone">—</span>
+        </div>
+        <div class="summary-row">
+          <span class="summary-label">บริษัท</span>
+          <span class="summary-value" id="sum-company">—</span>
+        </div>
+        <div class="summary-row">
+          <span class="summary-label">Workshop</span>
+          <span class="summary-value">Claude 123 🪽</span>
+        </div>
+        <div class="summary-row">
+          <span class="summary-label">ราคา</span>
+          <span class="summary-value ws-price-dynamic" style="color:var(--gold-dark); font-size:1.1rem;">3,500 บาท</span>
+        </div>
+      </div>
+
+      <!-- Payment options -->
+      <div class="payment-options">
+
+        <!-- Option A: Pay now -->
+        <div class="payment-option" id="opt-pay" data-value="pay">
+          <div class="payment-option-header">
+            <div class="payment-option-radio"></div>
+            <span class="payment-option-icon">💳</span>
+            <div>
+              <div class="payment-option-title">จ่ายเลย — จองที่แน่นอน</div>
+              <div class="payment-option-sub">โอนเงิน + upload สลิป ยืนยันที่ทันที</div>
+            </div>
+          </div>
+
+          <div class="payment-option-body">
+            <div class="payment-box" style="margin-bottom:1rem;">
+              <div class="bank-name">🏦 กสิกรไทย (KBank)</div>
+              <div class="account-number">752-2-35810-4</div>
+              <div class="account-holder">บจก. เดอะ ฮิวมานิเซอร์</div>
+              <div class="price-tag ws-price-dynamic">3,500 บาท</div>
+            </div>
+
+            <div class="alert alert-warning" style="margin-bottom:1rem;">
+              <span class="alert-icon">💡</span>
+              <span>โอนเงินก่อน แล้วอัพโหลดสลิปด้านล่าง ทีมจะ confirm ภายใน 24 ชั่วโมง</span>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="slip-upload">
+                อัพโหลดสลิปโอนเงิน <span class="required">*</span>
+              </label>
+              <div class="file-upload-zone" id="upload-zone">
+                <div class="upload-icon">📎</div>
+                <p><strong>แตะเพื่อเลือกไฟล์</strong> หรือลากมาวางที่นี่</p>
+                <p>รองรับ JPG, PNG, HEIC ขนาดไม่เกิน 10MB</p>
+                <input type="file" id="slip-upload" accept="image/*,.heic" style="display:none;">
+              </div>
+              <div class="file-preview hidden" id="file-preview">
+                <span class="file-preview-icon">🖼️</span>
+                <span class="file-preview-name" id="file-name">—</span>
+                <span class="file-preview-remove" id="remove-file" title="ลบไฟล์">✕</span>
+              </div>
+              <div class="form-error" id="err-slip">กรุณา upload สลิปโอนเงิน</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Option B: Interested -->
+        <div class="payment-option" id="opt-interest" data-value="interest">
+          <div class="payment-option-header">
+            <div class="payment-option-radio"></div>
+            <span class="payment-option-icon">💬</span>
+            <div>
+              <div class="payment-option-title">สนใจ ติดต่อกลับด้วย</div>
+              <div class="payment-option-sub">ยังไม่พร้อมจ่ายตอนนี้ — ทีมจะโทรหาคุณ</div>
+            </div>
+          </div>
+          <div class="payment-option-body">
+            <div class="alert alert-info">
+              <span class="alert-icon">📞</span>
+              <span>ทีมจะติดต่อกลับหาคุณภายใน 1 วันทำการ เพื่อให้ข้อมูลเพิ่มเติมและยืนยันที่นั่ง</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="form-error" id="err-payment" style="margin-bottom:1rem;">กรุณาเลือกตัวเลือกการชำระเงิน</div>
+
+      <div class="form-nav">
+        <button class="btn btn-ghost btn-back" id="btn-step4-back" type="button">← ย้อนกลับ</button>
+        <button class="btn btn-green btn-next" id="btn-submit" type="button">
+          ✓ ยืนยันการสมัคร
+        </button>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<!-- Submit overlay -->
+<div class="submit-overlay" id="submit-overlay">
+  <div class="big-spinner"></div>
+  <h3 style="color:white;">กำลังบันทึกข้อมูล...</h3>
+  <p style="color:rgba(255,255,255,0.6); font-size:0.9rem;">รอสักครู่นะ</p>
+</div>
+
+<div id="toast-container"></div>
+
+<!-- Supabase CDN -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../js/config.js"></script>
+<script>
+// ════════════════════════════════════════════════════════════
+// JAIFUL Registration Form — claude-123
+// ════════════════════════════════════════════════════════════
+
+const { createClient } = supabase;
+const db = createClient(JAIFUL_CONFIG.supabase.url, JAIFUL_CONFIG.supabase.anonKey);
+
+// ── State ──
+const state = {
+  currentStep: 1,
+  totalSteps: 4,
+  existingJaifulId: null,  // if returning user found
+  surveyQuestions: [],
+  surveyAnswers: {},       // { question_id: answer }
+  paymentChoice: null,     // 'pay' | 'interest'
+  slipFile: null,
+  workshopPrice: 3500,     // updated from DB on load
+};
+
+// ── Step labels ──
+const stepLabels = {
+  1: 'ข้อมูลส่วนตัว',
+  2: 'ข้อมูลการทำงาน',
+  3: 'แบบสำรวจก่อนเรียน',
+  4: 'ยืนยันการสมัคร',
+};
+
+// ── UI helpers ──
+function showToast(msg, type = '') {
+  const container = document.getElementById('toast-container');
+  const el = document.createElement('div');
+  el.className = `toast ${type}`;
+  el.textContent = msg;
+  container.appendChild(el);
+  setTimeout(() => el.remove(), 4000);
+}
+
+function setLoading(btnEl, loading, loadingText = 'กำลังดำเนินการ...') {
+  if (loading) {
+    btnEl.dataset.originalText = btnEl.innerHTML;
+    btnEl.innerHTML = `<span class="spinner"></span> ${loadingText}`;
+    btnEl.disabled = true;
+  } else {
+    btnEl.innerHTML = btnEl.dataset.originalText || btnEl.innerHTML;
+    btnEl.disabled = false;
+  }
+}
+
+function showError(id, show = true) {
+  const el = document.getElementById(id);
+  if (el) el.classList.toggle('visible', show);
+}
+
+function clearErrors() {
+  document.querySelectorAll('.form-error').forEach(el => el.classList.remove('visible'));
+  document.querySelectorAll('.form-input').forEach(el => el.classList.remove('error'));
+}
+
+// ── Progress UI ──
+function updateProgress(step) {
+  for (let i = 1; i <= 4; i++) {
+    const dot = document.getElementById(`dot-${i}`);
+    const line = document.getElementById(`line-${i}`);
+    if (i < step) {
+      dot.className = 'step-dot done';
+      dot.textContent = '✓';
+      if (line) line.className = 'step-line done';
+    } else if (i === step) {
+      dot.className = 'step-dot active';
+      dot.textContent = i;
+    } else {
+      dot.className = 'step-dot';
+      dot.textContent = i;
+      if (line) line.className = 'step-line';
+    }
+  }
+  document.getElementById('progress-label').innerHTML =
+    `ขั้น <strong>${step}</strong> จาก 4 — ${stepLabels[step]}`;
+}
+
+// ── Navigate steps ──
+function goToStep(n) {
+  document.querySelectorAll('.step-content').forEach(el => el.classList.remove('active'));
+  document.getElementById(`step-${n}`).classList.add('active');
+  state.currentStep = n;
+  updateProgress(n);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ════════════════════════════════════════════════════════════
+// RETURNING USER LOOKUP
+// ════════════════════════════════════════════════════════════
+async function lookupUser() {
+  const phone = document.getElementById('lookup-phone').value.trim().replace(/\D/g, '');
+  if (phone.length < 9) {
+    showToast('กรุณากรอกเบอร์โทรให้ครบ', 'error');
+    return;
+  }
+
+  const btn = document.getElementById('btn-lookup');
+  setLoading(btn, true, 'กำลังค้นหา...');
+
+  try {
+    const { data, error } = await db
+      .from('members')
+      .select('jaiful_id, full_name, nickname, phone, email, line_id, company, position')
+      .eq('phone', phone)
+      .maybeSingle();
+
+    if (data) {
+      // Auto-fill
+      document.getElementById('full-name').value = data.full_name || '';
+      document.getElementById('nickname').value  = data.nickname || '';
+      document.getElementById('phone').value     = data.phone || phone;
+      document.getElementById('email').value     = data.email || '';
+      document.getElementById('line-id').value   = data.line_id || '';
+      document.getElementById('company').value   = data.company || '';
+      document.getElementById('position').value  = data.position || '';
+
+      state.existingJaifulId = data.jaiful_id;
+
+      const result = document.getElementById('lookup-result');
+      result.className = 'lookup-result found';
+      result.innerHTML = `✅ เจอแล้ว! สวัสดีกลับมา <strong>${data.nickname || data.full_name}</strong> — ข้อมูลขึ้นมาแล้ว ตรวจสอบและแก้ไขได้เลย`;
+    } else {
+      // Auto-populate searched phone into the main phone field
+      document.getElementById('phone').value = phone;
+      const result = document.getElementById('lookup-result');
+      result.className = 'lookup-result not-found';
+      result.innerHTML = `👋 ยังไม่เคยสมัคร JAIFUL มาก่อน — กรอกข้อมูลด้านล่างได้เลย`;
+      state.existingJaifulId = null;
+    }
+  } catch (e) {
+    showToast('เกิดข้อผิดพลาด ลองใหม่อีกครั้ง', 'error');
+  } finally {
+    setLoading(btn, false);
+  }
+}
+
+// ════════════════════════════════════════════════════════════
+// SURVEY QUESTIONS
+// ════════════════════════════════════════════════════════════
+async function loadSurveyQuestions() {
+  try {
+    const { data, error } = await db
+      .from('survey_questions')
+      .select('*')
+      .eq('workshop_id', 'claude-123')
+      .eq('survey_type', 'pre')
+      .order('sort_order');
+
+    if (error) throw error;
+
+    state.surveyQuestions = data || [];
+    renderSurvey(data || []);
+  } catch (e) {
+    document.getElementById('survey-container').innerHTML = `
+      <div class="alert alert-warning">
+        <span class="alert-icon">⚠️</span>
+        <span>ไม่สามารถโหลดคำถามได้ตอนนี้ — กด "ถัดไป" เพื่อข้ามขั้นตอนนี้ได้</span>
+      </div>`;
+  }
+}
+
+function renderSurvey(questions) {
+  if (questions.length === 0) {
+    document.getElementById('survey-container').innerHTML = `
+      <div class="alert alert-info">
+        <span class="alert-icon">ℹ️</span>
+        <span>ยังไม่มีแบบสำรวจสำหรับ workshop นี้</span>
+      </div>`;
+    return;
+  }
+
+  const html = questions.map((q, idx) => {
+    const required = q.is_required ? '<span class="required">*</span>' : '';
+    let inputHtml = '';
+
+    if (q.question_type === 'choice') {
+      const opts = q.options || [];
+      inputHtml = `<div class="choice-group">
+        ${opts.map((opt, i) => `
+          <label class="choice-item" id="qi-${q.question_id}-${i}">
+            <input type="radio" name="q_${q.question_id}" value="${escHtml(opt)}"
+              onchange="setSurveyAnswer('${q.question_id}', '${escHtml(opt)}', '${q.question_id}')">
+            <span class="choice-label">${escHtml(opt)}</span>
+          </label>
+        `).join('')}
+      </div>`;
+    } else if (q.question_type === 'multiple') {
+      const opts = q.options || [];
+      inputHtml = `<div class="choice-group">
+        ${opts.map((opt, i) => `
+          <label class="choice-item" id="qm-${q.question_id}-${i}">
+            <input type="checkbox" name="q_${q.question_id}" value="${escHtml(opt)}"
+              onchange="setSurveyMulti('${q.question_id}')">
+            <span class="choice-label">${escHtml(opt)}</span>
+          </label>
+        `).join('')}
+      </div>`;
+    } else if (q.question_type === 'open') {
+      inputHtml = `<textarea class="form-input" rows="3"
+        placeholder="พิมพ์คำตอบที่นี่..."
+        id="q-open-${q.question_id}"
+        oninput="state.surveyAnswers['${q.question_id}'] = this.value"></textarea>`;
+    } else if (q.question_type === 'scale') {
+      inputHtml = `
+        <div class="scale-group">
+          ${[1,2,3,4,5].map(n => `
+            <button type="button" class="scale-btn" id="scale-${q.question_id}-${n}"
+              onclick="setScale('${q.question_id}', ${n})">${n}</button>
+          `).join('')}
+        </div>
+        <div class="scale-labels">
+          <span>น้อยที่สุด</span>
+          <span>มากที่สุด</span>
+        </div>`;
+    }
+
+    return `
+      <div class="form-group" style="margin-bottom:1.75rem;">
+        <label class="form-label">
+          ${idx + 1}. ${escHtml(q.question_text)} ${required}
+        </label>
+        ${inputHtml}
+        <div class="form-error" id="err-q-${q.question_id}">กรุณาตอบคำถามนี้</div>
+      </div>`;
+  }).join('');
+
+  document.getElementById('survey-container').innerHTML = html;
+
+  // Style choice items on selection
+  document.querySelectorAll('.choice-item input').forEach(input => {
+    input.addEventListener('change', () => {
+      const name = input.name;
+      if (input.type === 'radio') {
+        document.querySelectorAll(`input[name="${name}"]`).forEach(r => {
+          r.closest('.choice-item').classList.toggle('selected', r.checked);
+        });
+      } else {
+        input.closest('.choice-item').classList.toggle('selected', input.checked);
+      }
+    });
+  });
+}
+
+function escHtml(str) {
+  if (typeof str !== 'string') return '';
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function setSurveyAnswer(questionId, value) {
+  state.surveyAnswers[questionId] = value;
+}
+
+function setSurveyMulti(questionId) {
+  const checked = [...document.querySelectorAll(`input[name="q_${questionId}"]:checked`)]
+    .map(el => el.value);
+  state.surveyAnswers[questionId] = checked;
+}
+
+function setScale(questionId, value) {
+  state.surveyAnswers[questionId] = value;
+  for (let i = 1; i <= 5; i++) {
+    const btn = document.getElementById(`scale-${questionId}-${i}`);
+    if (btn) btn.classList.toggle('selected', i <= value);
+  }
+}
+
+// ════════════════════════════════════════════════════════════
+// VALIDATION
+// ════════════════════════════════════════════════════════════
+function validateStep1() {
+  clearErrors();
+  let valid = true;
+
+  const name = document.getElementById('full-name').value.trim();
+  if (!name) {
+    showError('err-full-name');
+    document.getElementById('full-name').classList.add('error');
+    valid = false;
+  }
+
+  const nick = document.getElementById('nickname').value.trim();
+  if (!nick) {
+    showError('err-nickname');
+    document.getElementById('nickname').classList.add('error');
+    valid = false;
+  }
+
+  const phone = document.getElementById('phone').value.trim().replace(/\D/g, '');
+  if (phone.length < 9 || phone.length > 10) {
+    showError('err-phone');
+    document.getElementById('phone').classList.add('error');
+    valid = false;
+  }
+
+  const email = document.getElementById('email').value.trim();
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    showError('err-email');
+    document.getElementById('email').classList.add('error');
+    valid = false;
+  }
+
+  return valid;
+}
+
+function validateStep2() {
+  clearErrors();
+  let valid = true;
+
+  const freelance = document.getElementById('is-freelance').checked;
+
+  if (!freelance) {
+    const company = document.getElementById('company').value.trim();
+    if (!company) {
+      showError('err-company');
+      document.getElementById('company').classList.add('error');
+      valid = false;
+    }
+  }
+
+  const position = document.getElementById('position').value.trim();
+  if (!position) {
+    showError('err-position');
+    document.getElementById('position').classList.add('error');
+    valid = false;
+  }
+
+  return valid;
+}
+
+function validateStep3() {
+  clearErrors();
+  let valid = true;
+
+  for (const q of state.surveyQuestions) {
+    if (!q.is_required) continue;
+    const ans = state.surveyAnswers[q.question_id];
+    const empty = ans === undefined || ans === null || ans === '' ||
+      (Array.isArray(ans) && ans.length === 0);
+    if (empty) {
+      showError(`err-q-${q.question_id}`);
+      valid = false;
+    }
+  }
+
+  return valid;
+}
+
+function validateStep4() {
+  clearErrors();
+  if (!state.paymentChoice) {
+    showError('err-payment');
+    return false;
+  }
+  if (state.paymentChoice === 'pay' && !state.slipFile) {
+    showError('err-slip');
+    return false;
+  }
+  return true;
+}
+
+// ════════════════════════════════════════════════════════════
+// STEP NAVIGATION
+// ════════════════════════════════════════════════════════════
+document.getElementById('btn-step1-next').addEventListener('click', () => {
+  if (validateStep1()) {
+    // Pre-fill phone in step 1 if lookup was used
+    const phone = document.getElementById('phone').value.trim().replace(/\D/g, '');
+    // Fill summary
+    goToStep(2);
+  }
+});
+
+document.getElementById('btn-step2-back').addEventListener('click', () => goToStep(1));
+document.getElementById('btn-step2-next').addEventListener('click', () => {
+  if (validateStep2()) {
+    goToStep(3);
+    if (state.surveyQuestions.length === 0) loadSurveyQuestions();
+  }
+});
+
+document.getElementById('btn-step3-back').addEventListener('click', () => goToStep(2));
+document.getElementById('btn-step3-next').addEventListener('click', () => {
+  if (validateStep3()) {
+    // Fill summary
+    document.getElementById('sum-name').textContent =
+      document.getElementById('full-name').value.trim();
+    document.getElementById('sum-phone').textContent =
+      document.getElementById('phone').value.trim();
+    const freelance = document.getElementById('is-freelance').checked;
+    document.getElementById('sum-company').textContent =
+      freelance ? 'ฟรีแลนซ์ / ส่วนตัว' : document.getElementById('company').value.trim();
+    goToStep(4);
+  }
+});
+
+document.getElementById('btn-step4-back').addEventListener('click', () => goToStep(3));
+
+// ════════════════════════════════════════════════════════════
+// PAYMENT OPTIONS
+// ════════════════════════════════════════════════════════════
+['opt-pay', 'opt-interest'].forEach(id => {
+  document.getElementById(id).addEventListener('click', () => {
+    document.querySelectorAll('.payment-option').forEach(el => el.classList.remove('selected'));
+    document.getElementById(id).classList.add('selected');
+    state.paymentChoice = document.getElementById(id).dataset.value;
+    showError('err-payment', false);
+  });
+});
+
+// ── File upload ──
+const uploadZone = document.getElementById('upload-zone');
+const slipInput  = document.getElementById('slip-upload');
+
+uploadZone.addEventListener('click', () => slipInput.click());
+
+uploadZone.addEventListener('dragover', e => {
+  e.preventDefault();
+  uploadZone.classList.add('drag-over');
+});
+uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('drag-over'));
+uploadZone.addEventListener('drop', e => {
+  e.preventDefault();
+  uploadZone.classList.remove('drag-over');
+  const file = e.dataTransfer.files[0];
+  if (file) handleFile(file);
+});
+
+slipInput.addEventListener('change', () => {
+  if (slipInput.files[0]) handleFile(slipInput.files[0]);
+});
+
+function handleFile(file) {
+  const maxSize = 10 * 1024 * 1024; // 10MB
+  if (file.size > maxSize) {
+    showToast('ไฟล์ใหญ่เกิน 10MB กรุณาเลือกไฟล์ใหม่', 'error');
+    return;
+  }
+  state.slipFile = file;
+  document.getElementById('file-name').textContent = file.name;
+  document.getElementById('file-preview').classList.remove('hidden');
+  showError('err-slip', false);
+}
+
+document.getElementById('remove-file').addEventListener('click', e => {
+  e.stopPropagation();
+  state.slipFile = null;
+  slipInput.value = '';
+  document.getElementById('file-preview').classList.add('hidden');
+});
+
+// ════════════════════════════════════════════════════════════
+// SUBMIT
+// ════════════════════════════════════════════════════════════
+document.getElementById('btn-submit').addEventListener('click', submitForm);
+
+async function submitForm() {
+  if (!validateStep4()) return;
+
+  document.getElementById('submit-overlay').classList.add('active');
+
+  try {
+    const fullName = document.getElementById('full-name').value.trim();
+    const nickname = document.getElementById('nickname').value.trim();
+    const phone    = document.getElementById('phone').value.trim().replace(/\D/g, '');
+    const email    = document.getElementById('email').value.trim().toLowerCase();
+    const lineId   = document.getElementById('line-id').value.trim();
+    const company  = document.getElementById('company').value.trim();
+    const position = document.getElementById('position').value.trim();
+
+    // ── 1. Upsert member ──
+    let jaifulId = state.existingJaifulId;
+
+    if (!jaifulId) {
+      // Check if phone/email already exists (duplicate detection)
+      const { data: existing } = await db
+        .from('members')
+        .select('jaiful_id')
+        .or(`phone.eq.${phone},email.eq.${email}`)
+        .maybeSingle();
+
+      jaifulId = existing?.jaiful_id || null;
+    }
+
+    if (jaifulId) {
+      // Update existing member
+      await db.from('members').update({
+        full_name: fullName, nickname, email, line_id: lineId,
+        company, position, updated_at: new Date().toISOString(),
+      }).eq('jaiful_id', jaifulId);
+    } else {
+      // Create new member
+      const { data: newMember, error: memberErr } = await db
+        .from('members')
+        .insert({ full_name: fullName, nickname, phone, email, line_id: lineId, company, position })
+        .select('jaiful_id')
+        .single();
+
+      if (memberErr) throw memberErr;
+      jaifulId = newMember.jaiful_id;
+    }
+
+    // ── 2. Upload slip (if paying) ──
+    let slipUrl = null;
+    if (state.paymentChoice === 'pay' && state.slipFile) {
+      const ext = state.slipFile.name.split('.').pop();
+      const path = `${jaifulId}/claude-123-${Date.now()}.${ext}`;
+      const { error: uploadErr } = await db.storage
+        .from(JAIFUL_CONFIG.storage.slipsBucket)
+        .upload(path, state.slipFile, { cacheControl: '3600', upsert: false });
+
+      if (uploadErr) throw uploadErr;
+
+      const { data: urlData } = db.storage
+        .from(JAIFUL_CONFIG.storage.slipsBucket)
+        .getPublicUrl(path);
+      slipUrl = urlData.publicUrl;
+    }
+
+    // ── 3. Create registration ──
+    const regStatus     = state.paymentChoice === 'pay' ? 'registered' : 'interested';
+    const paymentStatus = state.paymentChoice === 'pay' ? 'uploaded' : 'pending';
+
+    const { data: regData, error: regErr } = await db
+      .from('registrations')
+      .upsert({
+        jaiful_id: jaifulId,
+        workshop_id: 'claude-123',
+        status: regStatus,
+        payment_status: paymentStatus,
+        payment_amount: state.paymentChoice === 'pay' ? state.workshopPrice : null,
+        slip_url: slipUrl,
+      }, { onConflict: 'jaiful_id,workshop_id' })
+      .select('reg_id')
+      .single();
+
+    if (regErr) throw regErr;
+
+    // ── 4. Save survey responses ──
+    if (Object.keys(state.surveyAnswers).length > 0) {
+      const responses = Object.entries(state.surveyAnswers).map(([qId, ans]) => ({
+        jaiful_id: jaifulId,
+        question_id: qId,
+        workshop_id: 'claude-123',
+        reg_id: regData.reg_id,
+        answer: typeof ans === 'string' ? { value: ans } : { value: ans },
+      }));
+
+      await db.from('survey_responses').insert(responses);
+    }
+
+    // ── 5. Log JAI transaction ──
+    await db.from('jai_transactions').insert({
+      jaiful_id: jaifulId,
+      event_type: 'registered',
+      jai_amount: 10,
+      workshop_id: 'claude-123',
+      note: `สมัคร Claude 123 — ${state.paymentChoice === 'pay' ? 'จ่ายแล้ว' : 'สนใจ'}`,
+    });
+
+    // ── 6. Redirect to success page ──
+    const params = new URLSearchParams({
+      name: nickname || fullName,
+      jaiful_id: jaifulId,
+      status: state.paymentChoice,
+    });
+    window.location.href = `/claude-123/success?${params.toString()}`;
+
+  } catch (err) {
+    document.getElementById('submit-overlay').classList.remove('active');
+    console.error('Submit error:', err);
+
+    if (err.code === '23505') {
+      showToast('คุณสมัคร Claude 123 ไปแล้ว — ทีมจะติดต่อกลับเร็วๆ นี้', 'error');
+    } else {
+      showToast('เกิดข้อผิดพลาด กรุณาลองใหม่ หรือติดต่อทีมได้เลย', 'error');
+    }
+  }
+}
+
+// ── Auto-fill phone from lookup ──
+document.getElementById('lookup-phone').addEventListener('keydown', e => {
+  if (e.key === 'Enter') lookupUser();
+});
+document.getElementById('btn-lookup').addEventListener('click', lookupUser);
+
+// ── Mirror lookup phone → main phone field ──
+document.getElementById('lookup-phone').addEventListener('input', () => {
+  const val = document.getElementById('lookup-phone').value;
+  if (!document.getElementById('phone').value) {
+    document.getElementById('phone').value = val;
+  }
+});
+
+// ── Clear form button ──
+document.getElementById('btn-clear-form').addEventListener('click', () => {
+  ['full-name','nickname','phone','email','line-id','company','position'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  document.getElementById('lookup-phone').value = '';
+  const result = document.getElementById('lookup-result');
+  result.className = 'lookup-result';
+  result.innerHTML = '';
+  document.getElementById('is-freelance').checked = false;
+  toggleFreelance(false);
+  state.existingJaifulId = null;
+  clearErrors();
+  showToast('ล้างข้อมูลแล้ว', '');
+});
+
+// ── Freelance toggle ──
+function toggleFreelance(isFreelance) {
+  const companyGroup = document.getElementById('group-company');
+  const reqMark      = document.getElementById('req-company');
+  const labelCompany = document.getElementById('label-company');
+  const labelPos     = document.getElementById('label-position');
+  const posInput     = document.getElementById('position');
+
+  if (isFreelance) {
+    companyGroup.style.opacity = '0.5';
+    reqMark.style.display = 'none';
+    document.getElementById('company').placeholder = 'ไม่บังคับ';
+    labelPos.innerHTML = 'สาขา / ความเชี่ยวชาญ <span class="required">*</span>';
+    posInput.placeholder = 'เช่น Graphic Design, การตลาด';
+  } else {
+    companyGroup.style.opacity = '';
+    reqMark.style.display = '';
+    document.getElementById('company').placeholder = 'เช่น บริษัท ABC จำกัด';
+    labelPos.innerHTML = 'ตำแหน่ง <span class="required">*</span>';
+    posInput.placeholder = 'เช่น Marketing Manager';
+  }
+}
+
+document.getElementById('is-freelance').addEventListener('change', function() {
+  toggleFreelance(this.checked);
+});
+
+// ── Load workshop price dynamically ──
+(async () => {
+  try {
+    const { data } = await db
+      .from('workshops')
+      .select('price')
+      .eq('workshop_id', 'claude-123')
+      .single();
+    if (data?.price) {
+      state.workshopPrice = data.price;
+      const fmt = data.price.toLocaleString('th-TH') + ' บาท';
+      document.querySelectorAll('.ws-price-dynamic').forEach(el => el.textContent = fmt);
+    }
+  } catch (_) {}
+})();
+
+// Load survey on page load (in background)
+loadSurveyQuestions();
+</script>
+</body>
+</html>

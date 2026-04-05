@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JAIFUL — เรียนรู้ AI อย่างมีหลักคิด</title>
+  <meta name="description" content="JAIFUL ที่นี่คือชุมชนคนที่ใช้ AI อย่างมีหลักคิด เริ่มต้นกับ Claude 123 workshop แรกของเรา">
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    /* ── Hero ── */
+    .hero {
+      background: linear-gradient(160deg, #1e3f57 0%, #2D5A7B 60%, #3d7aa8 100%);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      width: 600px;
+      height: 600px;
+      border-radius: 50%;
+      background: rgba(232,168,56,0.06);
+      top: -200px;
+      right: -150px;
+      pointer-events: none;
+    }
+
+    .hero::after {
+      content: '';
+      position: absolute;
+      width: 400px;
+      height: 400px;
+      border-radius: 50%;
+      background: rgba(76,175,125,0.05);
+      bottom: -100px;
+      left: -100px;
+      pointer-events: none;
+    }
+
+    /* ── Nav ── */
+    .nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.25rem 1.5rem;
+      position: relative;
+      z-index: 10;
+    }
+
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      text-decoration: none;
+    }
+
+    .nav-logo .logo-mark {
+      width: 36px;
+      height: 36px;
+      background: var(--gold);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 0.9rem;
+      color: var(--blue-dark);
+    }
+
+    .nav-logo .logo-text {
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: white;
+      letter-spacing: 1px;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 1.5rem;
+      align-items: center;
+    }
+
+    .nav-links a {
+      color: rgba(255,255,255,0.7);
+      font-size: 0.95rem;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover { color: white; }
+
+    /* ── Hero content ── */
+    .hero-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 3rem 1.5rem;
+      position: relative;
+      z-index: 10;
+    }
+
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(232,168,56,0.15);
+      border: 1px solid rgba(232,168,56,0.3);
+      color: var(--gold-light);
+      font-size: 0.85rem;
+      font-weight: 600;
+      padding: 0.4rem 1rem;
+      border-radius: 999px;
+      margin-bottom: 1.5rem;
+      letter-spacing: 0.5px;
+    }
+
+    .hero-title {
+      font-size: clamp(2.2rem, 8vw, 3.5rem);
+      font-weight: 900;
+      color: white;
+      line-height: 1.15;
+      margin-bottom: 1.25rem;
+      max-width: 700px;
+    }
+
+    .hero-title .accent { color: var(--gold); }
+
+    .hero-sub {
+      font-size: clamp(1rem, 2.5vw, 1.2rem);
+      color: rgba(255,255,255,0.7);
+      max-width: 520px;
+      margin-bottom: 2.5rem;
+      line-height: 1.7;
+    }
+
+    .hero-cta-group {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .hero-scroll {
+      margin-top: 3rem;
+      color: rgba(255,255,255,0.4);
+      font-size: 0.85rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .scroll-arrow {
+      animation: bounce 1.5s infinite;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(6px); }
+    }
+
+    /* ── Hero wing CI ── */
+    .hero-title-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .hero-wing {
+      width: clamp(130px, 20vw, 240px);
+      height: auto;
+      opacity: 0.85;
+      flex-shrink: 0;
+      align-self: center;
+      animation: wing-in 1s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+      filter: drop-shadow(0 16px 40px rgba(100,140,200,0.3));
+      pointer-events: none;
+    }
+
+    @keyframes wing-in {
+      from { opacity: 0; transform: translateX(30px) scale(0.85); }
+      to   { opacity: 0.85; transform: translateX(0) scale(1); }
+    }
+
+    /* ── Workshop section ── */
+    .section {
+      padding: 4rem 1.5rem;
+    }
+
+    .section-eyebrow {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--gold-dark);
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      margin-bottom: 0.75rem;
+    }
+
+    .workshop-card {
+      background: white;
+      border-radius: var(--radius-xl);
+      overflow: hidden;
+      box-shadow: var(--shadow-lg);
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    .workshop-card-header {
+      background: linear-gradient(135deg, #1e3f57, #2D5A7B);
+      padding: 2.5rem 2rem;
+      color: white;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .workshop-card-header::before {
+      content: '🪽';
+      position: absolute;
+      right: 1.5rem;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 5rem;
+      opacity: 0.15;
+    }
+
+    .workshop-badge {
+      display: inline-block;
+      background: rgba(232,168,56,0.2);
+      border: 1px solid rgba(232,168,56,0.4);
+      color: var(--gold-light);
+      font-size: 0.8rem;
+      font-weight: 700;
+      padding: 0.3rem 0.75rem;
+      border-radius: 999px;
+      margin-bottom: 1rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .workshop-title {
+      font-size: 2rem;
+      font-weight: 900;
+      margin-bottom: 0.5rem;
+    }
+
+    .workshop-tagline {
+      font-size: 1.05rem;
+      opacity: 0.8;
+    }
+
+    .workshop-card-body {
+      padding: 2rem;
+    }
+
+    .workshop-meta {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-bottom: 1.75rem;
+    }
+
+    .meta-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.6rem;
+    }
+
+    .meta-icon { font-size: 1.2rem; margin-top: 1px; flex-shrink: 0; }
+
+    .meta-label {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    .meta-value {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .meta-value.gold { color: var(--gold-dark); font-size: 1.1rem; font-weight: 800; }
+
+    .workshop-desc {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      line-height: 1.7;
+      margin-bottom: 1.75rem;
+    }
+
+    .workshop-highlights {
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+      margin-bottom: 2rem;
+    }
+
+    .highlight-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      font-size: 0.95rem;
+    }
+
+    .highlight-check {
+      width: 22px;
+      height: 22px;
+      background: rgba(76,175,125,0.12);
+      color: var(--green);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      font-weight: 700;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .seats-indicator {
+      background: var(--warm-white);
+      border-radius: var(--radius-md);
+      padding: 0.875rem 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.5rem;
+    }
+
+    .seats-bar-wrap {
+      flex: 1;
+      margin: 0 1rem;
+    }
+
+    .seats-bar {
+      height: 8px;
+      background: var(--warm-gray);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .seats-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--green), var(--gold));
+      border-radius: 999px;
+      transition: width 0.6s ease;
+    }
+
+    /* ── About section ── */
+    .about-section {
+      background: var(--blue-dark);
+      color: white;
+      padding: 4rem 1.5rem;
+    }
+
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 2rem;
+      max-width: 900px;
+      margin: 2rem auto 0;
+    }
+
+    @media (min-width: 640px) {
+      .about-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+
+    .about-card {
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+    }
+
+    .about-card .icon {
+      font-size: 2rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .about-card h3 {
+      color: var(--gold-light);
+      font-size: 1rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .about-card p {
+      font-size: 0.9rem;
+      opacity: 0.75;
+      line-height: 1.6;
+    }
+
+    /* ── FAQ ── */
+    .faq-list {
+      max-width: 640px;
+      margin: 2rem auto 0;
+    }
+
+    .faq-item {
+      border-bottom: 1px solid var(--warm-gray);
+    }
+
+    .faq-question {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      padding: 1.1rem 0;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.95rem;
+      gap: 1rem;
+      user-select: none;
+    }
+
+    .faq-question:hover { color: var(--blue); }
+
+    .faq-icon {
+      font-size: 1.1rem;
+      color: var(--text-muted);
+      transition: transform 0.2s;
+      flex-shrink: 0;
+    }
+
+    .faq-item.open .faq-icon { transform: rotate(45deg); }
+
+    .faq-answer {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease, padding 0.3s;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      line-height: 1.7;
+    }
+
+    .faq-item.open .faq-answer {
+      max-height: 400px;
+      padding-bottom: 1rem;
+    }
+
+    /* ── Footer ── */
+    .footer {
+      background: var(--blue-dark);
+      color: rgba(255,255,255,0.5);
+      text-align: center;
+      padding: 2rem 1.5rem;
+      font-size: 0.85rem;
+    }
+
+    .footer a { color: rgba(255,255,255,0.6); }
+    .footer a:hover { color: white; }
+
+    /* ── Seat count loading ── */
+    #seat-count { transition: opacity 0.3s; }
+  </style>
+</head>
+<body>
+
+<!-- HERO -->
+<section class="hero">
+  <nav class="nav">
+    <a href="/" class="nav-logo">
+      <div class="logo-mark">JF</div>
+      <span class="logo-text">JAIFUL</span>
+    </a>
+    <div class="nav-links">
+      <a href="#workshop">Workshop</a>
+      <a href="/about">เกี่ยวกับ JAIFUL</a>
+      <a href="#faq">FAQ</a>
+    </div>
+  </nav>
+
+  <div class="hero-content">
+    <div class="hero-eyebrow">
+      ✨ เปิดรับสมัครแล้ว
+    </div>
+    <div class="hero-title-row">
+      <h1 class="hero-title" style="text-align:left;">
+        พาติดปีก AI<br><span class="accent">ไปด้วยกัน</span>
+      </h1>
+      <img src="/wing.png" alt="" class="hero-wing">
+    </div>
+    <p class="hero-sub">
+      ใครที่เคยงงๆ กับ AI เหมือนกัน — ไม่รู้ว่าจะเริ่มยังไงดี<br>
+      workshop นี้ออกแบบมาทลายสิ่งนั้นเลยครับ
+      กลุ่มเล็กๆ บรรยากาศเป็นกันเอง ไม่ต้องรู้อะไรมาก่อนเลย<br>
+      มาทลายความ "งง" เปลี่ยนให้เป็นความ "ง่าย" ไปด้วยกันนะครับ
+    </p>
+    <div class="hero-cta-group">
+      <a href="/claude-123" class="btn btn-primary btn-lg">
+        🪽 สมัคร Claude 123
+      </a>
+      <a href="#workshop" class="btn btn-secondary btn-lg" style="color:white;border-color:rgba(255,255,255,0.4);">
+        ดูรายละเอียด
+      </a>
+    </div>
+    <div class="hero-scroll">
+      <span>เลื่อนดูเพิ่มเติม</span>
+      <span class="scroll-arrow">↓</span>
+    </div>
+  </div>
+</section>
+
+<!-- WORKSHOP -->
+<section id="workshop" class="section" style="background: var(--warm-white);">
+  <div class="container">
+    <p class="section-eyebrow text-center">Workshop แรกของ JAIFUL</p>
+    <h2 class="text-center" style="color:var(--blue-dark); margin-bottom: 2rem;">เปิดรับสมัครแล้ว 🎉</h2>
+
+    <div class="workshop-card">
+      <div class="workshop-card-header">
+        <div class="workshop-badge">Workshop by JAIFUL</div>
+        <div class="workshop-title">Claude 123 🪽</div>
+        <div class="workshop-tagline">มาเปลี่ยน "งง" เป็น "ง่าย" ไปด้วยกัน</div>
+      </div>
+
+      <div class="workshop-card-body">
+        <div class="workshop-meta">
+          <div class="meta-item">
+            <span class="meta-icon">🕘</span>
+            <div>
+              <div class="meta-label">เวลา</div>
+              <div class="meta-value">Full Day 09:00–17:30</div>
+            </div>
+          </div>
+          <div class="meta-item">
+            <span class="meta-icon">👥</span>
+            <div>
+              <div class="meta-label">จำนวนที่นั่ง</div>
+              <div class="meta-value" id="seat-count">10 ที่นั่ง</div>
+            </div>
+          </div>
+          <div class="meta-item">
+            <span class="meta-icon">📅</span>
+            <div>
+              <div class="meta-label">วันจัด</div>
+              <div class="meta-value ws-date-dynamic">TBA — ภายใน 2–4 สัปดาห์</div>
+            </div>
+          </div>
+          <div class="meta-item">
+            <span class="meta-icon">💰</span>
+            <div>
+              <div class="meta-label">ราคา</div>
+              <div class="meta-value gold ws-price-dynamic">3,500 บาท</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Seats indicator -->
+        <div class="seats-indicator">
+          <span style="font-size:0.85rem; color:var(--text-muted); font-weight:600;">ที่นั่งที่เหลือ</span>
+          <div class="seats-bar-wrap">
+            <div class="seats-bar">
+              <div class="seats-fill" id="seats-fill" style="width:30%"></div>
+            </div>
+          </div>
+          <span style="font-size:0.9rem; font-weight:700; color:var(--green);" id="seats-left">กำลังโหลด...</span>
+        </div>
+
+        <p class="workshop-desc">
+          สำหรับคนทำงานทั่วไปที่สงสัย งงๆ อยากลองใช้ AI แต่ยังไม่รู้จะเริ่มยังไง
+          — workshop นี้จะช่วยให้คุณเข้าใจ Claude จากศูนย์ถึงใช้ได้จริงในงาน
+          ในวันเดียว ไม่มีศัพท์เทคนิค ไม่ต้องเขียนโค้ด
+        </p>
+
+        <div class="workshop-highlights">
+          <div class="highlight-item">
+            <span class="highlight-check">✓</span>
+            <span>เข้าใจ Claude จริงๆ — ไม่ใช่แค่ copy prompt</span>
+          </div>
+          <div class="highlight-item">
+            <span class="highlight-check">✓</span>
+            <span>ฝึกใช้กับงานจริงของตัวเอง ทำได้เลยหลังเรียน</span>
+          </div>
+          <div class="highlight-item">
+            <span class="highlight-check">✓</span>
+            <span>กลุ่มเล็ก 10 คน — ดูแลและโต้ตอบได้จริง</span>
+          </div>
+          <div class="highlight-item">
+            <span class="highlight-check">✓</span>
+            <span>รวมอาหารกลางวัน</span>
+          </div>
+          <div class="highlight-item">
+            <span class="highlight-check">✓</span>
+            <span>เข้า JAIFUL Family — ชุมชนที่ support กันต่อหลังเรียนจบ</span>
+          </div>
+        </div>
+
+        <a href="/claude-123" class="btn btn-primary btn-full btn-lg">
+          🪽 สมัครเลย — Claude 123
+        </a>
+
+        <p class="text-center text-muted mt-2" style="font-size:0.85rem;">
+          ไม่แน่ใจ? กด "สนใจ ติดต่อกลับด้วย" ในฟอร์มได้เลย ไม่ต้องจ่ายล่วงหน้า
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT JAIFUL -->
+<section id="about" class="about-section">
+  <div class="container-wide">
+    <p class="section-eyebrow text-center" style="color:var(--gold);">JAIFUL คืออะไร</p>
+    <h2 class="text-center" style="color:white; margin-bottom: 0.5rem;">
+      JAIFUL (ใจฟู) — JAI + AI = ใช้ AI ให้ใจฟู
+    </h2>
+    <p class="text-center" style="color:rgba(255,255,255,0.65); max-width:520px; margin: 0 auto; line-height:1.8;">
+      เราเชื่อว่า AI ที่ดีที่สุดไม่ใช่ AI ที่ฉลาดที่สุด<br>
+      แต่คือ AI ที่คืนเวลาให้คุณกลับมา "ใจ" กับคนรอบข้างได้มากขึ้น
+    </p>
+
+    <div class="about-grid">
+      <div class="about-card">
+        <div class="icon">🧠</div>
+        <h3>สอนให้คิดเป็น ไม่ใช่แจก prompt</h3>
+        <p>ไม่ได้มาแจก prompt list ให้ copy ไป — แต่ช่วยให้เข้าใจว่า Claude คิดยังไง ใช้ได้เองในทุกสถานการณ์</p>
+      </div>
+      <div class="about-card">
+        <div class="icon">🫂</div>
+        <h3>จบแล้วยังอยู่ด้วยกัน</h3>
+        <p>JAIFUL Family ไม่ใช่แค่ LINE group ที่เงียบหลัง workshop จบ — เราดูแลกันต่อจริงๆ</p>
+      </div>
+      <div class="about-card">
+        <div class="icon">🌱</div>
+        <h3>ค่อยๆ โตไปด้วยกัน</h3>
+        <p>ทุก workshop มี badge, ประวัติ, JAI สะสม ยิ่งเรียนก็ยิ่งรู้สึกว่าตัวเองเป็นส่วนหนึ่งของ JAIFUL</p>
+      </div>
+    </div>
+
+    <div class="text-center mt-4">
+      <a href="/about" class="btn btn-ghost" style="color:rgba(255,255,255,0.75); border-color:rgba(255,255,255,0.25); font-size:0.95rem;">
+        ทำความรู้จัก JAIFUL ให้มากขึ้น 🪽
+      </a>
+    </div>
+
+  </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq" class="section" style="background: white;">
+  <div class="container">
+    <p class="section-eyebrow text-center">คำถามที่พบบ่อย</p>
+    <h2 class="text-center" style="color:var(--blue-dark); margin-bottom: 0.5rem;">FAQ</h2>
+
+    <div class="faq-list">
+      <div class="faq-item">
+        <div class="faq-question">
+          <span>ต้องมีพื้นฐานด้าน tech ไหม?</span>
+          <span class="faq-icon">+</span>
+        </div>
+        <div class="faq-answer">
+          ไม่ต้องเลย! Claude 123 ออกแบบมาสำหรับคนทำงานทั่วไปที่ไม่มีพื้นฐาน tech
+          ขอแค่มือถือหรือ notebook และความอยากรู้ก็พอ
+        </div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question">
+          <span>ใช้ application อะไรบ้างในวัน workshop?</span>
+          <span class="faq-icon">+</span>
+        </div>
+        <div class="faq-answer">
+          ใช้ Claude ผ่าน browser เป็นหลัก ไม่ต้องติดตั้งอะไรเพิ่ม
+          มีบัญชี Claude (ฟรีก็ใช้ได้) หรือเราจะแนะนำวิธีสมัครในวัน workshop
+        </div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question">
+          <span>ราคารวมอะไรบ้าง?</span>
+          <span class="faq-icon">+</span>
+        </div>
+        <div class="faq-answer">
+          ราคา <span class="ws-price-dynamic">3,500 บาท</span> รวม: อาหารกลางวัน + workshop materials
+          + Badge ดิจิทัล + เข้า JAIFUL Family community
+        </div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question">
+          <span>ถ้าไม่แน่ใจ ยังไม่พร้อมจ่าย ทำได้ไหม?</span>
+          <span class="faq-icon">+</span>
+        </div>
+        <div class="faq-answer">
+          ได้เลย! ในฟอร์มสมัครมีตัวเลือก "สนใจ ติดต่อกลับด้วย"
+          กรอกข้อมูลแค่นั้น แล้วทีมจะติดต่อกลับหาคุณ ไม่ต้องจ่ายล่วงหน้า
+        </div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question">
+          <span>JAIFUL Family คืออะไร?</span>
+          <span class="faq-icon">+</span>
+        </div>
+        <div class="faq-answer">
+          ชุมชนของคนที่ผ่าน JAIFUL workshop มาแล้ว — เป็นที่ที่เราแชร์ความรู้
+          ช่วยเหลือกัน และติดตามกันต่อหลังจาก workshop จบไปแล้ว
+        </div>
+      </div>
+    </div>
+
+    <div class="text-center mt-4">
+      <a href="/claude-123" class="btn btn-blue btn-lg">
+        🪽 สมัคร Claude 123 ได้เลย
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div>
+    <strong style="color:rgba(255,255,255,0.7);">JAIFUL</strong>
+    &nbsp;|&nbsp;
+    Workshop by บริษัท เดอะ ฮิวมานิเซอร์ จำกัด
+  </div>
+  <div style="margin-top:0.5rem;">
+    <a href="mailto:bnzaza@gmail.com">bnzaza@gmail.com</a>
+    &nbsp;·&nbsp;
+    <a href="tel:0959159149">095-915-9149</a>
+  </div>
+</footer>
+
+<!-- Toast container -->
+<div id="toast-container"></div>
+
+<!-- Supabase CDN -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/config.js"></script>
+<script>
+  // ── Init Supabase ──
+  const { createClient } = supabase;
+  const db = createClient(JAIFUL_CONFIG.supabase.url, JAIFUL_CONFIG.supabase.anonKey);
+
+  // ── Load seat availability + price ──
+  async function loadSeats() {
+    try {
+      const { data: workshop } = await db
+        .from('workshops')
+        .select('max_seats, workshop_id, price, date, location')
+        .eq('workshop_id', 'claude-123')
+        .single();
+
+      const { count } = await db
+        .from('registrations')
+        .select('*', { count: 'exact', head: true })
+        .eq('workshop_id', 'claude-123')
+        .in('status', ['registered', 'confirmed', 'attended']);
+
+      if (workshop) {
+        const taken = count || 0;
+        const left = workshop.max_seats - taken;
+        const pct = Math.min(100, (taken / workshop.max_seats) * 100);
+
+        document.getElementById('seats-left').textContent =
+          left <= 0 ? 'เต็มแล้ว' : `เหลือ ${left} ที่`;
+        document.getElementById('seat-count').textContent =
+          `${workshop.max_seats} ที่นั่ง`;
+        document.getElementById('seats-fill').style.width = pct + '%';
+
+        if (left <= 3 && left > 0) {
+          document.getElementById('seats-left').style.color = 'var(--gold-dark)';
+        } else if (left <= 0) {
+          document.getElementById('seats-left').style.color = 'var(--error)';
+        }
+
+        // Update price everywhere on page
+        if (workshop.price) {
+          const priceFormatted = workshop.price.toLocaleString('th-TH') + ' บาท';
+          document.querySelectorAll('.ws-price-dynamic').forEach(el => {
+            el.textContent = priceFormatted;
+          });
+        }
+
+        // Update date if set
+        if (workshop.date) {
+          const d = new Date(workshop.date);
+          const opts = { day: 'numeric', month: 'long', year: 'numeric' };
+          const dateStr = d.toLocaleDateString('th-TH', opts);
+          document.querySelectorAll('.ws-date-dynamic').forEach(el => {
+            el.textContent = dateStr;
+          });
+        }
+      }
+    } catch (e) {
+      document.getElementById('seats-left').textContent = 'ดูรายละเอียดในฟอร์ม';
+    }
+  }
+
+  loadSeats();
+
+  // ── FAQ accordion ──
+  document.querySelectorAll('.faq-item').forEach(item => {
+    item.querySelector('.faq-question').addEventListener('click', () => {
+      const isOpen = item.classList.contains('open');
+      document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+      if (!isOpen) item.classList.add('open');
+    });
+  });
+
+  // ── Smooth scroll ──
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+      const target = document.querySelector(a.getAttribute('href'));
+      if (target) {
+        e.preventDefault();
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,2002 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Panel — JAIFUL</title>
+  <link rel="stylesheet" href="../css/styles.css">
+  <style>
+    body { background: #f0eee9; }
+
+    /* ── Login screen ── */
+    #login-screen {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(160deg, #1e3f57, #2D5A7B);
+      padding: 2rem;
+    }
+
+    .login-card {
+      background: white;
+      border-radius: 24px;
+      padding: 2.5rem 2rem;
+      width: 100%;
+      max-width: 400px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      text-align: center;
+    }
+
+    .login-logo {
+      width: 56px;
+      height: 56px;
+      background: var(--gold);
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 1.1rem;
+      color: var(--blue-dark);
+      margin: 0 auto 1rem;
+    }
+
+    /* ── App layout ── */
+    #app { display: none; min-height: 100vh; }
+
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 220px;
+      height: 100vh;
+      background: linear-gradient(180deg, #1e3f57, #2D5A7B);
+      display: flex;
+      flex-direction: column;
+      z-index: 100;
+      transition: transform 0.3s;
+    }
+
+    .sidebar-logo {
+      padding: 1.5rem 1.25rem 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .sidebar-logo .logo-mark {
+      width: 32px;
+      height: 32px;
+      background: var(--gold);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 0.8rem;
+      color: var(--blue-dark);
+      flex-shrink: 0;
+    }
+
+    .sidebar-logo span {
+      font-weight: 800;
+      color: white;
+      font-size: 1.05rem;
+    }
+
+    .sidebar-logo small {
+      display: block;
+      color: rgba(255,255,255,0.4);
+      font-size: 0.7rem;
+      font-weight: 400;
+    }
+
+    .sidebar-nav {
+      flex: 1;
+      padding: 1rem 0;
+      overflow-y: auto;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.7rem 1.25rem;
+      color: rgba(255,255,255,0.6);
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.15s;
+      border: none;
+      background: none;
+      width: 100%;
+      text-align: left;
+      font-family: 'Sarabun', sans-serif;
+      border-radius: 0;
+    }
+
+    .nav-item:hover { color: white; background: rgba(255,255,255,0.06); }
+    .nav-item.active { color: white; background: rgba(255,255,255,0.12); }
+    .nav-item .icon { font-size: 1.1rem; width: 22px; text-align: center; flex-shrink: 0; }
+
+    .nav-section-label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: rgba(255,255,255,0.25);
+      padding: 1rem 1.25rem 0.4rem;
+    }
+
+    .sidebar-footer {
+      padding: 1rem 1.25rem;
+      border-top: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .admin-info {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .admin-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.15);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.8rem;
+    }
+
+    .admin-name { font-size: 0.85rem; color: white; font-weight: 600; }
+    .admin-role { font-size: 0.75rem; color: rgba(255,255,255,0.45); }
+
+    /* ── Main content ── */
+    .main-content {
+      margin-left: 220px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .top-bar {
+      background: white;
+      border-bottom: 1px solid var(--warm-gray);
+      padding: 0.875rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+
+    .top-bar h1 { font-size: 1.1rem; color: var(--blue-dark); }
+
+    .content-area {
+      padding: 1.75rem 1.5rem;
+      flex: 1;
+    }
+
+    /* ── Mobile sidebar toggle ── */
+    .mobile-menu-btn {
+      display: none;
+      background: none;
+      border: none;
+      font-size: 1.4rem;
+      cursor: pointer;
+      padding: 0.25rem;
+    }
+
+    @media (max-width: 768px) {
+      .sidebar { transform: translateX(-100%); }
+      .sidebar.open { transform: translateX(0); }
+      .main-content { margin-left: 0; }
+      .mobile-menu-btn { display: flex; }
+      .sidebar-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.4);
+        z-index: 99;
+      }
+      .sidebar-overlay.open { display: block; }
+    }
+
+    /* ── Stats cards ── */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+      margin-bottom: 1.75rem;
+    }
+
+    @media (min-width: 900px) {
+      .stats-grid { grid-template-columns: repeat(4, 1fr); }
+    }
+
+    .stat-card {
+      background: white;
+      border-radius: var(--radius-md);
+      padding: 1.25rem;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .stat-label {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+
+    .stat-value {
+      font-size: 2rem;
+      font-weight: 900;
+      color: var(--blue-dark);
+      line-height: 1;
+    }
+
+    .stat-sub {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-top: 0.4rem;
+    }
+
+    .stat-card.gold .stat-value  { color: var(--gold-dark); }
+    .stat-card.green .stat-value { color: var(--green-dark); }
+    .stat-card.red .stat-value   { color: var(--error); }
+
+    /* ── Seats progress ── */
+    .seats-progress-bar {
+      height: 6px;
+      background: var(--warm-gray);
+      border-radius: 999px;
+      overflow: hidden;
+      margin-top: 0.5rem;
+    }
+
+    .seats-progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--green), var(--gold));
+      border-radius: 999px;
+      transition: width 0.5s;
+    }
+
+    /* ── Table ── */
+    .table-wrap {
+      background: white;
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+    }
+
+    .table-header {
+      padding: 1.25rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 0.875rem;
+      border-bottom: 1px solid var(--warm-gray);
+    }
+
+    .table-title { font-size: 1rem; font-weight: 700; color: var(--blue-dark); }
+
+    .table-controls {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .search-input {
+      padding: 0.5rem 0.875rem;
+      border: 1.5px solid var(--warm-gray);
+      border-radius: var(--radius-sm);
+      font-family: 'Sarabun', sans-serif;
+      font-size: 0.9rem;
+      width: 200px;
+      transition: border-color 0.2s;
+    }
+
+    .search-input:focus {
+      outline: none;
+      border-color: var(--blue-light);
+    }
+
+    select.filter-select {
+      padding: 0.5rem 2rem 0.5rem 0.875rem;
+      border: 1.5px solid var(--warm-gray);
+      border-radius: var(--radius-sm);
+      font-family: 'Sarabun', sans-serif;
+      font-size: 0.9rem;
+      background: white url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%232D5A7B' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat right 0.75rem center;
+      -webkit-appearance: none;
+      cursor: pointer;
+    }
+
+    .table-scroll { overflow-x: auto; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.875rem;
+    }
+
+    thead th {
+      background: #f8f6f3;
+      padding: 0.75rem 1rem;
+      text-align: left;
+      font-weight: 700;
+      color: var(--text-muted);
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      white-space: nowrap;
+      border-bottom: 1px solid var(--warm-gray);
+    }
+
+    tbody tr {
+      border-bottom: 1px solid #f5f0eb;
+      transition: background 0.1s;
+    }
+
+    tbody tr:last-child { border-bottom: none; }
+    tbody tr:hover { background: #fafaf8; }
+
+    td {
+      padding: 0.875rem 1rem;
+      vertical-align: middle;
+    }
+
+    td .name-cell { font-weight: 600; }
+    td .sub-cell  { font-size: 0.8rem; color: var(--text-muted); margin-top: 1px; }
+
+    .actions-cell {
+      display: flex;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 3rem 1rem;
+      color: var(--text-muted);
+    }
+
+    .empty-icon { font-size: 2.5rem; margin-bottom: 0.75rem; }
+
+    /* ── Pagination ── */
+    .table-footer {
+      padding: 1rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-top: 1px solid var(--warm-gray);
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .pagination { display: flex; gap: 0.4rem; }
+
+    .page-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: var(--radius-sm);
+      border: 1.5px solid var(--warm-gray);
+      background: white;
+      cursor: pointer;
+      font-family: 'Sarabun', sans-serif;
+      font-size: 0.85rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s;
+    }
+
+    .page-btn:hover { border-color: var(--blue-light); color: var(--blue); }
+    .page-btn.active { background: var(--blue); color: white; border-color: var(--blue); }
+
+    /* ── View panels ── */
+    .view-panel { display: none; }
+    .view-panel.active { display: block; }
+
+    /* ── Survey data view ── */
+    .survey-chart-bar {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .survey-option-label {
+      font-size: 0.85rem;
+      min-width: 180px;
+      flex-shrink: 0;
+    }
+
+    .survey-bar-wrap {
+      flex: 1;
+      background: var(--warm-gray);
+      border-radius: 999px;
+      height: 10px;
+      overflow: hidden;
+    }
+
+    .survey-bar-fill {
+      height: 100%;
+      background: var(--blue);
+      border-radius: 999px;
+      transition: width 0.5s;
+    }
+
+    .survey-bar-count {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      min-width: 30px;
+      text-align: right;
+    }
+
+    /* ── Modal ── */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 200;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      animation: fade-in 0.2s;
+    }
+
+    .modal-overlay.hidden { display: none !important; }
+
+    .modal-box {
+      background: white;
+      border-radius: var(--radius-xl);
+      padding: 1.75rem;
+      width: 100%;
+      max-width: 560px;
+      max-height: 90vh;
+      overflow-y: auto;
+      animation: slide-up 0.25s ease;
+    }
+
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.25rem;
+    }
+
+    .modal-close {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: var(--warm-gray);
+      border: none;
+      cursor: pointer;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .slip-img {
+      width: 100%;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--warm-gray);
+    }
+
+    .member-detail-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.875rem;
+    }
+
+    .detail-item { padding: 0.75rem; background: var(--warm-white); border-radius: var(--radius-sm); }
+    .detail-label { font-size: 0.75rem; color: var(--text-muted); font-weight: 600; margin-bottom: 0.25rem; }
+    .detail-value { font-size: 0.9rem; font-weight: 600; }
+
+    @keyframes fade-in  { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes slide-up { from { transform: translateY(16px); } to { transform: translateY(0); } }
+
+    /* ── Workshop settings panel ── */
+    .settings-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.25rem;
+    }
+
+    @media (min-width: 700px) {
+      .settings-grid { grid-template-columns: 1fr 1fr; }
+    }
+
+    /* ── Survey builder ── */
+    .question-item {
+      background: white;
+      border: 1.5px solid var(--warm-gray);
+      border-radius: var(--radius-md);
+      padding: 1rem 1.25rem;
+      margin-bottom: 0.75rem;
+      transition: border-color 0.2s;
+    }
+
+    .question-item:hover { border-color: var(--blue-light); }
+
+    .question-item-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 0.75rem;
+    }
+
+    .question-type-badge {
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      background: rgba(45,90,123,0.1);
+      color: var(--blue);
+      white-space: nowrap;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════
+     LOGIN SCREEN
+     ════════════════════════════════════════ -->
+<div id="login-screen">
+  <div class="login-card">
+    <div class="login-logo">JF</div>
+    <h2 style="color:var(--blue-dark); margin-bottom:0.35rem;">JAIFUL Admin</h2>
+    <p style="color:var(--text-muted); font-size:0.9rem; margin-bottom:1.75rem;">
+      เข้าสู่ระบบเพื่อจัดการ workshop
+    </p>
+
+    <div class="form-group">
+      <label class="form-label" for="login-email">Email</label>
+      <input type="email" class="form-input" id="login-email"
+        placeholder="admin@jaiful.com" autocomplete="email">
+    </div>
+
+    <div class="form-group">
+      <label class="form-label" for="login-password">Password</label>
+      <input type="password" class="form-input" id="login-password"
+        placeholder="••••••••" autocomplete="current-password">
+    </div>
+
+    <div class="form-error visible" id="login-error" style="margin-bottom:0.875rem; display:none;"></div>
+
+    <button class="btn btn-blue btn-full" id="btn-login" type="button">
+      เข้าสู่ระบบ
+    </button>
+
+    <p style="margin-top:1.25rem; font-size:0.8rem; color:var(--text-muted);">
+      ลืมรหัสผ่าน? ติดต่อ <a href="mailto:bnzaza@gmail.com">bnzaza@gmail.com</a>
+    </p>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     MAIN APP (shown after login)
+     ════════════════════════════════════════ -->
+<div id="app">
+
+  <!-- Sidebar overlay (mobile) -->
+  <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+  <!-- Sidebar -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-mark">JF</div>
+      <div>
+        <span>JAIFUL</span>
+        <small>Admin Panel</small>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="nav-section-label">หน้าหลัก</div>
+      <button class="nav-item active" onclick="showView('dashboard')" data-view="dashboard">
+        <span class="icon">📊</span> Dashboard
+      </button>
+
+      <div class="nav-section-label">ผู้สมัคร</div>
+      <button class="nav-item" onclick="showView('registrations')" data-view="registrations">
+        <span class="icon">👥</span> รายชื่อผู้สมัคร
+      </button>
+      <button class="nav-item" onclick="showView('survey')" data-view="survey">
+        <span class="icon">📋</span> ข้อมูล Survey
+      </button>
+
+      <div class="nav-section-label">ตั้งค่า</div>
+      <button class="nav-item" onclick="showView('workshop')" data-view="workshop">
+        <span class="icon">🛠</span> Workshop Config
+      </button>
+      <button class="nav-item" onclick="showView('questions')" data-view="questions">
+        <span class="icon">❓</span> สร้างคำถาม Survey
+      </button>
+      <button class="nav-item" onclick="showView('account')" data-view="account">
+        <span class="icon">👤</span> บัญชีของฉัน
+      </button>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="admin-info">
+        <div class="admin-avatar" id="admin-avatar">A</div>
+        <div>
+          <div class="admin-name" id="admin-name">Admin</div>
+          <div class="admin-role" id="admin-role">Owner</div>
+        </div>
+      </div>
+      <button class="btn btn-ghost btn-sm btn-full" id="btn-logout"
+        style="color:rgba(255,255,255,0.5); text-align:left; padding:0.4rem 0;">
+        🚪 ออกจากระบบ
+      </button>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <div class="main-content">
+    <div class="top-bar">
+      <div style="display:flex; align-items:center; gap:0.875rem;">
+        <button class="mobile-menu-btn" onclick="toggleSidebar()">☰</button>
+        <h1 id="page-title">Dashboard</h1>
+      </div>
+      <div style="display:flex; align-items:center; gap:0.75rem;">
+        <span class="badge-chip badge-blue" style="font-size:0.75rem;">Claude 123 🪽</span>
+        <button class="btn btn-secondary btn-sm" onclick="refreshCurrentView()" title="Refresh">🔄</button>
+        <a href="/" target="_blank" class="btn btn-secondary btn-sm">
+          🌐 หน้าเว็บ
+        </a>
+      </div>
+    </div>
+
+    <div class="content-area">
+
+      <!-- ══════════════════════════════
+           VIEW: DASHBOARD
+           ══════════════════════════════ -->
+      <div class="view-panel active" id="view-dashboard">
+
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-label">สมัครทั้งหมด</div>
+            <div class="stat-value" id="stat-total">—</div>
+            <div class="stat-sub">คน</div>
+          </div>
+          <div class="stat-card green">
+            <div class="stat-label">จ่ายแล้ว / Confirmed</div>
+            <div class="stat-value" id="stat-paid">—</div>
+            <div class="stat-sub">คน</div>
+          </div>
+          <div class="stat-card gold">
+            <div class="stat-label">รอติดตาม</div>
+            <div class="stat-value" id="stat-interested">—</div>
+            <div class="stat-sub">คน (สนใจ)</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">ที่นั่งเหลือ</div>
+            <div class="stat-value" id="stat-seats">—</div>
+            <div class="stat-sub" id="stat-seats-sub">จาก 10 ที่</div>
+            <div class="seats-progress-bar">
+              <div class="seats-progress-fill" id="stat-seats-fill" style="width:0%"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent registrations -->
+        <div class="table-wrap">
+          <div class="table-header">
+            <span class="table-title">สมัครล่าสุด</span>
+            <button class="btn btn-secondary btn-sm" onclick="showView('registrations')">
+              ดูทั้งหมด →
+            </button>
+          </div>
+          <div class="table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th>ชื่อ</th>
+                  <th>สถานะ</th>
+                  <th>การชำระ</th>
+                  <th>วันสมัคร</th>
+                  <th>จัดการ</th>
+                </tr>
+              </thead>
+              <tbody id="recent-table-body">
+                <tr><td colspan="5"><div class="empty-state"><div class="spinner spinner-blue"></div></div></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════════════════════════════
+           VIEW: REGISTRATIONS
+           ══════════════════════════════ -->
+      <div class="view-panel" id="view-registrations">
+        <div class="table-wrap">
+          <div class="table-header">
+            <span class="table-title">รายชื่อผู้สมัคร Claude 123</span>
+            <div class="table-controls">
+              <input type="search" class="search-input" id="search-input"
+                placeholder="ค้นหาชื่อ, เบอร์..." oninput="filterTable()">
+              <select class="filter-select" id="filter-status" onchange="filterTable()">
+                <option value="">สถานะทั้งหมด</option>
+                <option value="interested">สนใจ</option>
+                <option value="registered">สมัครแล้ว</option>
+                <option value="confirmed">Confirmed</option>
+                <option value="attended">เข้าร่วม</option>
+                <option value="cancelled">ยกเลิก</option>
+              </select>
+              <select class="filter-select" id="filter-payment" onchange="filterTable()">
+                <option value="">ทุกสถานะชำระ</option>
+                <option value="pending">รอชำระ</option>
+                <option value="uploaded">Upload แล้ว</option>
+                <option value="confirmed">ยืนยันแล้ว</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th>
+                    <input type="checkbox" id="check-all" onchange="toggleAllCheckboxes(this.checked)"
+                      style="accent-color:var(--blue);">
+                  </th>
+                  <th>ชื่อ / ชื่อเล่น</th>
+                  <th>เบอร์ / Email</th>
+                  <th>บริษัท</th>
+                  <th>สถานะ</th>
+                  <th>ชำระเงิน</th>
+                  <th>วันสมัคร</th>
+                  <th>จัดการ</th>
+                </tr>
+              </thead>
+              <tbody id="reg-table-body">
+                <tr><td colspan="8">
+                  <div class="empty-state">
+                    <div class="spinner spinner-blue"></div>
+                    <p class="mt-2">กำลังโหลด...</p>
+                  </div>
+                </td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="table-footer">
+            <div id="table-count" style="color:var(--text-muted); font-size:0.85rem;">—</div>
+            <div style="display:flex; align-items:center; gap:1rem;">
+              <!-- Bulk actions -->
+              <div id="bulk-actions" style="display:none; gap:0.5rem; align-items:center;" class="hidden">
+                <span style="font-size:0.85rem; font-weight:600; color:var(--blue);" id="selected-count">0 คนที่เลือก</span>
+                <button class="btn btn-green btn-sm" onclick="bulkConfirm()">✓ Confirm ทั้งหมด</button>
+                <button class="btn btn-sm" style="background:var(--error); color:white;" onclick="bulkCancel()">ยกเลิก</button>
+              </div>
+              <div class="pagination" id="pagination"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════════════════════════════
+           VIEW: SURVEY DATA
+           ══════════════════════════════ -->
+      <div class="view-panel" id="view-survey">
+        <div class="card" style="margin-bottom:1.25rem;">
+          <h3 style="color:var(--blue-dark); margin-bottom:0.35rem;">ข้อมูล Pre-course Survey</h3>
+          <p style="color:var(--text-muted); font-size:0.9rem;">Claude 123 🪽 — สรุปคำตอบจากผู้สมัคร</p>
+        </div>
+        <div id="survey-data-container">
+          <div class="empty-state">
+            <div class="spinner spinner-blue"></div>
+            <p class="mt-2">กำลังโหลด...</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════════════════════════════
+           VIEW: WORKSHOP CONFIG
+           ══════════════════════════════ -->
+      <div class="view-panel" id="view-workshop">
+        <div class="card">
+          <h3 style="color:var(--blue-dark); margin-bottom:1.25rem;">ตั้งค่า Workshop — Claude 123 🪽</h3>
+          <div class="settings-grid">
+            <div class="form-group">
+              <label class="form-label">ราคา (บาท)</label>
+              <input type="number" class="form-input" id="ws-price" placeholder="3500">
+            </div>
+            <div class="form-group">
+              <label class="form-label">จำนวนที่นั่ง</label>
+              <input type="number" class="form-input" id="ws-seats" placeholder="10">
+            </div>
+            <div class="form-group">
+              <label class="form-label">วันจัด</label>
+              <input type="date" class="form-input" id="ws-date">
+            </div>
+            <div class="form-group">
+              <label class="form-label">สถานที่</label>
+              <input type="text" class="form-input" id="ws-location" placeholder="เช่น WeWork Exchange Tower">
+            </div>
+            <div class="form-group">
+              <label class="form-label" style="display:flex; align-items:center; justify-content:space-between;">
+                <span>Google Maps Link</span>
+                <a id="ws-map-preview" href="#" target="_blank" rel="noopener"
+                  style="font-size:0.8rem; color:var(--blue); display:none;">🗺 เปิด Maps</a>
+              </label>
+              <input type="url" class="form-input" id="ws-map-url"
+                placeholder="https://maps.google.com/..."
+                oninput="updateMapPreview(this.value)">
+            </div>
+            <div class="form-group" style="grid-column: 1 / -1;">
+              <label class="form-label">สถานะ</label>
+              <select class="form-input" id="ws-status">
+                <option value="draft">Draft</option>
+                <option value="open">Open — รับสมัคร</option>
+                <option value="full">Full — เต็มแล้ว</option>
+                <option value="closed">Closed</option>
+                <option value="completed">Completed</option>
+              </select>
+            </div>
+          </div>
+          <button class="btn btn-blue" id="btn-save-workshop" type="button">
+            💾 บันทึกการตั้งค่า
+          </button>
+        </div>
+      </div>
+
+      <!-- ══════════════════════════════
+           VIEW: SURVEY QUESTIONS BUILDER
+           ══════════════════════════════ -->
+      <div class="view-panel" id="view-questions">
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:1.25rem; flex-wrap:wrap; gap:0.75rem;">
+          <div>
+            <h2 style="font-size:1.1rem; color:var(--blue-dark);">คำถาม Pre-course Survey</h2>
+            <p style="font-size:0.85rem; color:var(--text-muted);">Claude 123 🪽</p>
+          </div>
+          <button class="btn btn-blue btn-sm" onclick="openAddQuestion()">+ เพิ่มคำถาม</button>
+        </div>
+        <div id="questions-list">
+          <div class="empty-state"><div class="spinner spinner-blue"></div></div>
+        </div>
+      </div>
+
+      <!-- ══════════════════════════════
+           VIEW: ACCOUNT MANAGEMENT
+           ══════════════════════════════ -->
+      <div class="view-panel" id="view-account">
+
+        <div class="card" style="margin-bottom:1.25rem;">
+          <h3 style="color:var(--blue-dark); margin-bottom:1rem;">บัญชีของฉัน</h3>
+          <div style="display:flex; align-items:center; gap:1rem; flex-wrap:wrap;">
+            <div style="width:52px;height:52px;border-radius:50%;background:var(--blue);display:flex;align-items:center;justify-content:center;font-size:1.4rem;color:white;flex-shrink:0;">👤</div>
+            <div>
+              <div style="font-weight:700;color:var(--text);" id="acct-email">—</div>
+              <div style="font-size:0.85rem;color:var(--text-muted);">Admin</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-bottom:1.25rem;">
+          <h3 style="color:var(--blue-dark); margin-bottom:0.35rem;">เปลี่ยน Password</h3>
+          <p style="font-size:0.875rem;color:var(--text-muted);margin-bottom:1.25rem;">ใส่ password ใหม่ที่ต้องการ — Supabase Auth จะอัปเดตทันที</p>
+          <div class="form-group">
+            <label class="form-label">Password ใหม่ <span class="required">*</span></label>
+            <input type="password" class="form-input" id="acct-new-password"
+              placeholder="อย่างน้อย 8 ตัวอักษร" autocomplete="new-password">
+          </div>
+          <div class="form-group">
+            <label class="form-label">ยืนยัน Password ใหม่ <span class="required">*</span></label>
+            <input type="password" class="form-input" id="acct-confirm-password"
+              placeholder="กรอกซ้ำอีกครั้ง" autocomplete="new-password">
+          </div>
+          <div class="alert alert-warning hidden" id="acct-err" style="margin-bottom:1rem;">
+            <span class="alert-icon">⚠️</span>
+            <span id="acct-err-text">—</span>
+          </div>
+          <button class="btn btn-blue" id="btn-change-password" onclick="changePassword()">
+            🔐 อัปเดต Password
+          </button>
+        </div>
+
+        <div class="card">
+          <h3 style="color:var(--blue-dark); margin-bottom:0.35rem;">ออกจากระบบ</h3>
+          <p style="font-size:0.875rem;color:var(--text-muted);margin-bottom:1rem;">ออกจากระบบบน browser นี้</p>
+          <button class="btn btn-ghost" style="color:var(--error);border-color:var(--error);" onclick="signOutAdmin()">
+            🚪 Logout
+          </button>
+        </div>
+
+      </div>
+
+    </div><!-- /content-area -->
+  </div><!-- /main-content -->
+</div><!-- /app -->
+
+<!-- ══════════════════════════════════
+     MODAL: Member Detail + Confirm
+     ══════════════════════════════════ -->
+<div class="modal-overlay hidden" id="modal-member">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h3 style="color:var(--blue-dark);" id="modal-member-name">—</h3>
+      <button class="modal-close" onclick="closeModal('modal-member')">✕</button>
+    </div>
+
+    <div id="modal-member-body"><!-- filled by JS --></div>
+
+    <div style="display:flex; gap:0.75rem; margin-top:1.25rem; flex-wrap:wrap;" id="modal-member-actions">
+      <!-- Confirm button shown conditionally -->
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Slip viewer -->
+<div class="modal-overlay hidden" id="modal-slip">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h3 style="color:var(--blue-dark);">สลิปโอนเงิน</h3>
+      <button class="modal-close" onclick="closeModal('modal-slip')">✕</button>
+    </div>
+    <img class="slip-img" id="slip-img-preview" src="" alt="slip">
+    <div style="margin-top:1rem; display:flex; gap:0.75rem; justify-content:flex-end;">
+      <a id="slip-download-link" href="#" target="_blank" class="btn btn-secondary btn-sm">
+        🔗 เปิดในแท็บใหม่
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Add / Edit Question -->
+<div class="modal-overlay hidden" id="modal-question">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h3 style="color:var(--blue-dark);" id="modal-q-title">เพิ่มคำถาม</h3>
+      <button class="modal-close" onclick="closeModal('modal-question')">✕</button>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">คำถาม <span class="required">*</span></label>
+      <textarea class="form-input" id="q-text" rows="2" placeholder="เช่น คุณเคยใช้ AI มาก่อนไหม?"></textarea>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">ประเภทคำถาม</label>
+      <select class="form-input" id="q-type" onchange="onQTypeChange()">
+        <option value="choice">Choice — เลือก 1</option>
+        <option value="multiple">Multiple — เลือกหลาย</option>
+        <option value="open">Open — พิมพ์เอง</option>
+        <option value="scale">Scale — 1-5</option>
+      </select>
+    </div>
+
+    <div id="q-options-wrap" class="form-group">
+      <label class="form-label">ตัวเลือก <span class="hint">(แต่ละบรรทัดคือ 1 ตัวเลือก)</span></label>
+      <textarea class="form-input" id="q-options" rows="4"
+        placeholder="ตัวเลือก 1&#10;ตัวเลือก 2&#10;ตัวเลือก 3"></textarea>
+    </div>
+
+    <div style="display:flex; align-items:center; gap:0.75rem; margin-bottom:1.25rem;">
+      <input type="checkbox" id="q-required" checked style="accent-color:var(--blue); width:18px; height:18px;">
+      <label for="q-required" style="font-weight:600; font-size:0.9rem;">คำถามบังคับ</label>
+    </div>
+
+    <input type="hidden" id="q-editing-id">
+
+    <div style="display:flex; gap:0.75rem;">
+      <button class="btn btn-ghost" onclick="closeModal('modal-question')">ยกเลิก</button>
+      <button class="btn btn-blue" id="btn-save-question" onclick="saveQuestion()">💾 บันทึก</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast-container"></div>
+
+<!-- Supabase CDN -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../js/config.js"></script>
+<script>
+// ════════════════════════════════════════════════════════════
+// JAIFUL Admin Panel
+// ════════════════════════════════════════════════════════════
+
+const { createClient } = supabase;
+const db = createClient(JAIFUL_CONFIG.supabase.url, JAIFUL_CONFIG.supabase.anonKey);
+
+// ── State ──
+const admin = {
+  user: null,
+  role: null,
+  registrations: [],
+  filtered: [],
+  currentPage: 1,
+  pageSize: 20,
+  selectedIds: new Set(),
+};
+
+// ════════════════════════════════════════════════════════════
+// TOAST
+// ════════════════════════════════════════════════════════════
+function showToast(msg, type = '') {
+  const c = document.getElementById('toast-container');
+  const el = document.createElement('div');
+  el.className = `toast ${type}`;
+  el.textContent = msg;
+  c.appendChild(el);
+  setTimeout(() => el.remove(), 4000);
+}
+
+// ════════════════════════════════════════════════════════════
+// AUTH
+// ════════════════════════════════════════════════════════════
+async function init() {
+  const { data: { session } } = await db.auth.getSession();
+  if (session) {
+    await onLogin(session.user);
+  }
+}
+
+document.getElementById('btn-login').addEventListener('click', async () => {
+  const email    = document.getElementById('login-email').value.trim();
+  const password = document.getElementById('login-password').value;
+  const errEl    = document.getElementById('login-error');
+
+  if (!email || !password) {
+    errEl.textContent = 'กรุณากรอก email และ password';
+    errEl.style.display = 'block';
+    return;
+  }
+
+  const btn = document.getElementById('btn-login');
+  btn.innerHTML = '<span class="spinner"></span> กำลังเข้าสู่ระบบ...';
+  btn.disabled = true;
+  errEl.style.display = 'none';
+
+  const { data, error } = await db.auth.signInWithPassword({ email, password });
+
+  btn.innerHTML = 'เข้าสู่ระบบ';
+  btn.disabled = false;
+
+  if (error) {
+    errEl.textContent = 'Email หรือ password ไม่ถูกต้อง';
+    errEl.style.display = 'block';
+    return;
+  }
+
+  await onLogin(data.user);
+});
+
+document.getElementById('login-password').addEventListener('keydown', e => {
+  if (e.key === 'Enter') document.getElementById('btn-login').click();
+});
+
+async function onLogin(user) {
+  admin.user = user;
+
+  // Fetch admin_user record for name + role
+  const { data: adminUser } = await db
+    .from('admin_users')
+    .select('name, role')
+    .eq('auth_id', user.id)
+    .maybeSingle();
+
+  const name = adminUser?.name || user.email.split('@')[0];
+  const role = adminUser?.role || 'owner';
+
+  admin.role = role;
+
+  document.getElementById('admin-name').textContent = name;
+  document.getElementById('admin-role').textContent = role.charAt(0).toUpperCase() + role.slice(1);
+  document.getElementById('admin-avatar').textContent = name.charAt(0).toUpperCase();
+
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('app').style.display = 'flex';
+
+  loadDashboard();
+}
+
+document.getElementById('btn-logout').addEventListener('click', async () => {
+  await db.auth.signOut();
+  window.location.reload();
+});
+
+// ════════════════════════════════════════════════════════════
+// NAVIGATION
+// ════════════════════════════════════════════════════════════
+function showView(view) {
+  document.querySelectorAll('.view-panel').forEach(el => el.classList.remove('active'));
+  document.getElementById(`view-${view}`).classList.add('active');
+
+  document.querySelectorAll('.nav-item').forEach(el => {
+    el.classList.toggle('active', el.dataset.view === view);
+  });
+
+  const titles = {
+    dashboard: 'Dashboard',
+    registrations: 'รายชื่อผู้สมัคร',
+    survey: 'ข้อมูล Survey',
+    workshop: 'Workshop Config',
+    questions: 'สร้างคำถาม Survey',
+    account: 'บัญชีของฉัน',
+  };
+  document.getElementById('page-title').textContent = titles[view] || view;
+
+  if (view === 'dashboard') loadDashboard();
+  if (view === 'registrations') loadRegistrations();
+  if (view === 'survey') loadSurveyData();
+  if (view === 'workshop') loadWorkshopConfig();
+  if (view === 'questions') loadQuestions();
+  if (view === 'account') loadAccountView();
+
+  closeSidebar();
+}
+
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('sidebar-overlay').classList.toggle('open');
+}
+
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sidebar-overlay').classList.remove('open');
+}
+
+// ════════════════════════════════════════════════════════════
+// DASHBOARD
+// ════════════════════════════════════════════════════════════
+async function loadDashboard() {
+  try {
+    const [workshopRes, regRes] = await Promise.all([
+      db.from('workshops').select('max_seats, price').eq('workshop_id', 'claude-123').single(),
+      db.from('registrations')
+        .select(`
+          reg_id, status, payment_status, created_at,
+          members (full_name, nickname, phone)
+        `)
+        .eq('workshop_id', 'claude-123')
+        .order('created_at', { ascending: false }),
+    ]);
+
+    const regs   = regRes.data || [];
+    const ws     = workshopRes.data;
+    const total  = regs.length;
+    const paid   = regs.filter(r => r.payment_status === 'confirmed').length;
+    const interested = regs.filter(r => r.status === 'interested').length;
+    const confirmed  = regs.filter(r => ['confirmed', 'attended'].includes(r.status)).length;
+    const seats  = ws ? ws.max_seats - confirmed : 0;
+    const pct    = ws ? Math.min(100, (confirmed / ws.max_seats) * 100) : 0;
+
+    document.getElementById('stat-total').textContent     = total;
+    document.getElementById('stat-paid').textContent      = paid;
+    document.getElementById('stat-interested').textContent = interested;
+    document.getElementById('stat-seats').textContent     = Math.max(0, seats);
+    document.getElementById('stat-seats-sub').textContent = `จาก ${ws?.max_seats || 10} ที่`;
+    document.getElementById('stat-seats-fill').style.width = pct + '%';
+
+    // Recent table (last 5)
+    const recent = regs.slice(0, 5);
+    const tbody = document.getElementById('recent-table-body');
+    if (recent.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="5"><div class="empty-state"><div class="empty-icon">📭</div><p>ยังไม่มีผู้สมัคร</p></div></td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = recent.map(r => `
+      <tr>
+        <td>
+          <div class="name-cell">${escHtml(r.members?.full_name || '—')}</div>
+          <div class="sub-cell">${escHtml(r.members?.nickname || '')}</div>
+        </td>
+        <td><span class="status-chip status-${r.status}">${statusLabel(r.status)}</span></td>
+        <td><span class="status-chip status-${r.payment_status}">${paymentLabel(r.payment_status)}</span></td>
+        <td style="white-space:nowrap; font-size:0.8rem; color:var(--text-muted);">
+          ${formatDate(r.created_at)}
+        </td>
+        <td>
+          <button class="btn btn-secondary btn-sm" onclick="openMemberModal('${r.reg_id}')">
+            ดู
+          </button>
+        </td>
+      </tr>
+    `).join('');
+
+  } catch (e) {
+    console.error('Dashboard error:', e);
+  }
+}
+
+// ════════════════════════════════════════════════════════════
+// REGISTRATIONS TABLE
+// ════════════════════════════════════════════════════════════
+async function loadRegistrations() {
+  const tbody = document.getElementById('reg-table-body');
+  tbody.innerHTML = `<tr><td colspan="8"><div class="empty-state"><div class="spinner spinner-blue"></div></div></td></tr>`;
+
+  try {
+    const { data, error } = await db
+      .from('registrations')
+      .select(`
+        reg_id, status, payment_status, slip_url, created_at, confirmed_at, notes,
+        members (jaiful_id, full_name, nickname, phone, email, company, position, line_id)
+      `)
+      .eq('workshop_id', 'claude-123')
+      .order('created_at', { ascending: false });
+
+    if (error) throw error;
+    admin.registrations = data || [];
+    admin.filtered = [...admin.registrations];
+    renderTable();
+  } catch (e) {
+    tbody.innerHTML = `<tr><td colspan="8"><div class="empty-state"><div class="empty-icon">⚠️</div><p>โหลดข้อมูลไม่สำเร็จ</p></div></td></tr>`;
+  }
+}
+
+function filterTable() {
+  const q      = document.getElementById('search-input').value.toLowerCase();
+  const status = document.getElementById('filter-status').value;
+  const pay    = document.getElementById('filter-payment').value;
+
+  admin.filtered = admin.registrations.filter(r => {
+    const m = r.members || {};
+    const matchQ = !q ||
+      (m.full_name || '').toLowerCase().includes(q) ||
+      (m.nickname || '').toLowerCase().includes(q) ||
+      (m.phone || '').includes(q) ||
+      (m.email || '').toLowerCase().includes(q);
+    const matchStatus = !status || r.status === status;
+    const matchPay    = !pay    || r.payment_status === pay;
+    return matchQ && matchStatus && matchPay;
+  });
+
+  admin.currentPage = 1;
+  renderTable();
+}
+
+function renderTable() {
+  const tbody = document.getElementById('reg-table-body');
+  const start = (admin.currentPage - 1) * admin.pageSize;
+  const page  = admin.filtered.slice(start, start + admin.pageSize);
+
+  document.getElementById('table-count').textContent =
+    `แสดง ${Math.min(admin.filtered.length, start + admin.pageSize)} จาก ${admin.filtered.length} คน`;
+
+  if (page.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="8"><div class="empty-state"><div class="empty-icon">🔍</div><p>ไม่พบข้อมูล</p></div></td></tr>`;
+    renderPagination();
+    return;
+  }
+
+  tbody.innerHTML = page.map(r => {
+    const m = r.members || {};
+    const checked = admin.selectedIds.has(r.reg_id) ? 'checked' : '';
+    return `
+      <tr>
+        <td><input type="checkbox" ${checked} style="accent-color:var(--blue);"
+          onchange="toggleSelect('${r.reg_id}', this.checked)"></td>
+        <td>
+          <div class="name-cell">${escHtml(m.full_name || '—')}</div>
+          <div class="sub-cell">${escHtml(m.nickname || '')} · ${escHtml(m.jaiful_id || '')}</div>
+        </td>
+        <td>
+          <div>${escHtml(m.phone || '—')}</div>
+          <div class="sub-cell">${escHtml(m.email || '')}</div>
+        </td>
+        <td>
+          <div>${escHtml(m.company || '—')}</div>
+          <div class="sub-cell">${escHtml(m.position || '')}</div>
+        </td>
+        <td><span class="status-chip status-${r.status}">${statusLabel(r.status)}</span></td>
+        <td>
+          <span class="status-chip status-${r.payment_status}">${paymentLabel(r.payment_status)}</span>
+          ${r.slip_url ? `<button class="btn btn-sm" style="font-size:0.75rem; padding:0.2rem 0.5rem; margin-left:4px; background:rgba(45,90,123,0.08); color:var(--blue);" onclick="viewSlip('${escHtml(r.slip_url)}')">🖼 slip</button>` : ''}
+        </td>
+        <td style="white-space:nowrap; font-size:0.8rem; color:var(--text-muted);">
+          ${formatDate(r.created_at)}
+        </td>
+        <td>
+          <div class="actions-cell">
+            <button class="btn btn-secondary btn-sm" onclick="openMemberModal('${r.reg_id}')">จัดการ</button>
+            ${r.payment_status === 'uploaded' ? `<button class="btn btn-green btn-sm" onclick="confirmPayment('${r.reg_id}', '${m.jaiful_id}')">✓ Confirm</button>` : ''}
+          </div>
+        </td>
+      </tr>`;
+  }).join('');
+
+  renderPagination();
+}
+
+function renderPagination() {
+  const total = Math.ceil(admin.filtered.length / admin.pageSize);
+  const p = document.getElementById('pagination');
+  if (total <= 1) { p.innerHTML = ''; return; }
+
+  let html = '';
+  for (let i = 1; i <= total; i++) {
+    html += `<button class="page-btn ${i === admin.currentPage ? 'active' : ''}"
+      onclick="gotoPage(${i})">${i}</button>`;
+  }
+  p.innerHTML = html;
+}
+
+function gotoPage(n) {
+  admin.currentPage = n;
+  renderTable();
+}
+
+// ── Selection ──
+function toggleSelect(id, checked) {
+  if (checked) admin.selectedIds.add(id);
+  else admin.selectedIds.delete(id);
+  updateBulkUI();
+}
+
+function toggleAllCheckboxes(checked) {
+  const page = admin.filtered.slice(
+    (admin.currentPage - 1) * admin.pageSize,
+    admin.currentPage * admin.pageSize
+  );
+  page.forEach(r => {
+    if (checked) admin.selectedIds.add(r.reg_id);
+    else admin.selectedIds.delete(r.reg_id);
+  });
+  renderTable();
+  updateBulkUI();
+}
+
+function updateBulkUI() {
+  const count = admin.selectedIds.size;
+  const wrap  = document.getElementById('bulk-actions');
+  if (count > 0) {
+    wrap.style.display = 'flex';
+    document.getElementById('selected-count').textContent = `${count} คนที่เลือก`;
+  } else {
+    wrap.style.display = 'none';
+  }
+}
+
+// ── Bulk confirm ──
+async function bulkConfirm() {
+  if (admin.selectedIds.size === 0) return;
+  if (!confirm(`Confirm payment สำหรับ ${admin.selectedIds.size} คน?`)) return;
+
+  const ids = [...admin.selectedIds];
+  for (const id of ids) {
+    const reg = admin.registrations.find(r => r.reg_id === id);
+    if (reg) await confirmPayment(id, reg.members?.jaiful_id, true);
+  }
+  admin.selectedIds.clear();
+  updateBulkUI();
+  showToast(`Confirmed ${ids.length} คน`, 'success');
+  await loadRegistrations();
+  await loadDashboard();
+}
+
+async function bulkCancel() {
+  if (admin.selectedIds.size === 0) return;
+  if (!confirm(`ยกเลิกการเลือกทั้งหมด?`)) return;
+  admin.selectedIds.clear();
+  updateBulkUI();
+  renderTable();
+}
+
+// ════════════════════════════════════════════════════════════
+// CONFIRM PAYMENT
+// ════════════════════════════════════════════════════════════
+async function confirmPayment(regId, jaifulId, silent = false) {
+  if (!silent && !confirm('ยืนยันการชำระเงินสำหรับผู้สมัครนี้?')) return;
+
+  try {
+    await db.from('registrations').update({
+      status: 'confirmed',
+      payment_status: 'confirmed',
+      confirmed_at: new Date().toISOString(),
+      confirmed_by: admin.user?.email,
+    }).eq('reg_id', regId);
+
+    // Update member status
+    if (jaifulId) {
+      await db.from('members').update({
+        member_status: 'paid',
+      }).eq('jaiful_id', jaifulId);
+
+      // Give Pioneer badge
+      const { data: badge } = await db
+        .from('badges')
+        .select('badge_id')
+        .eq('workshop_id', 'claude-123')
+        .eq('trigger_event', 'payment_confirmed')
+        .maybeSingle();
+
+      if (badge) {
+        await db.from('member_badges').upsert({
+          jaiful_id: jaifulId,
+          badge_id: badge.badge_id,
+          workshop_id: 'claude-123',
+          given_by: admin.user?.email,
+        }, { onConflict: 'jaiful_id,badge_id' });
+      }
+
+      // Log JAI
+      await db.from('jai_transactions').insert({
+        jaiful_id: jaifulId,
+        event_type: 'paid',
+        jai_amount: 50,
+        workshop_id: 'claude-123',
+        note: 'Admin confirm payment',
+      });
+    }
+
+    if (!silent) {
+      showToast('✅ Confirmed แล้ว! Badge Pioneer ถูกมอบให้แล้ว', 'success');
+      closeModal('modal-member');
+      await loadRegistrations();
+      await loadDashboard();
+    }
+  } catch (e) {
+    if (!silent) showToast('เกิดข้อผิดพลาด: ' + e.message, 'error');
+    console.error(e);
+  }
+}
+
+// ════════════════════════════════════════════════════════════
+// MEMBER MODAL (Edit)
+// ════════════════════════════════════════════════════════════
+async function openMemberModal(regId) {
+  const reg = admin.registrations.find(r => r.reg_id === regId)
+    || (await db.from('registrations').select(`
+        reg_id, status, payment_status, slip_url, created_at, confirmed_at, notes,
+        members (jaiful_id, full_name, nickname, phone, email, company, position, line_id)
+      `).eq('reg_id', regId).single()).data;
+
+  if (!reg) return;
+  const m = reg.members || {};
+
+  document.getElementById('modal-member-name').textContent =
+    `${m.full_name || '—'} (${m.nickname || '—'})`;
+
+  const sel = (field, val) => `
+    <option value="interested"  ${val==='interested'  ? 'selected':''}>สนใจ</option>
+    <option value="registered"  ${val==='registered'  ? 'selected':''}>สมัครแล้ว</option>
+    <option value="confirmed"   ${val==='confirmed'   ? 'selected':''}>Confirmed</option>
+    <option value="attended"    ${val==='attended'    ? 'selected':''}>เข้าร่วมแล้ว</option>
+    <option value="cancelled"   ${val==='cancelled'   ? 'selected':''}>ยกเลิก</option>`;
+
+  const selPay = (val) => `
+    <option value="pending"   ${val==='pending'   ? 'selected':''}>รอชำระ</option>
+    <option value="uploaded"  ${val==='uploaded'  ? 'selected':''}>Upload แล้ว</option>
+    <option value="confirmed" ${val==='confirmed' ? 'selected':''}>ยืนยันแล้ว</option>
+    <option value="refunded"  ${val==='refunded'  ? 'selected':''}>Refunded</option>`;
+
+  document.getElementById('modal-member-body').innerHTML = `
+    <input type="hidden" id="modal-reg-id"    value="${escHtml(reg.reg_id)}">
+    <input type="hidden" id="modal-jaiful-id" value="${escHtml(m.jaiful_id || '')}">
+
+    <div class="member-detail-grid" style="margin-bottom:1rem;">
+      <div class="form-group" style="margin:0;">
+        <label class="form-label" style="font-size:0.75rem;">JAIFUL ID</label>
+        <div style="padding:0.4rem 0; font-weight:700; color:var(--blue); font-size:0.9rem; letter-spacing:0.04em;">${escHtml(m.jaiful_id || '—')}</div>
+      </div>
+      <div class="form-group" style="margin:0;">
+        <label class="form-label" style="font-size:0.75rem;">เบอร์โทร</label>
+        <div style="padding:0.4rem 0; font-size:0.9rem;">${escHtml(m.phone || '—')}</div>
+      </div>
+      <div class="form-group" style="margin:0;">
+        <label class="form-label" style="font-size:0.75rem;">ชื่อ-นามสกุล</label>
+        <input type="text" class="form-input" id="edit-fullname" value="${escHtml(m.full_name || '')}">
+      </div>
+      <div class="form-group" style="margin:0;">
+        <label class="form-label" style="font-size:0.75rem;">ชื่อเล่น</label>
+        <input type="text" class="form-input" id="edit-nickname" value="${escHtml(m.nickname || '')}">
+      </div>
+      <div class="form-group" style="margin:0;">
+        <label class="form-label" style="font-size:0.75rem;">Email</label>
+        <input type="email" class="form-input" id="edit-email" value="${escHtml(m.email || '')}">
+      </div>
+      <div class="form-group" style="margin:0;">
+        <label class="form-label" style="font-size:0.75rem;">LINE ID</label>
+        <input type="text" class="form-input" id="edit-line-id" value="${escHtml(m.line_id || '')}">
+      </div>
+      <div class="form-group" style="margin:0;">
+        <label class="form-label" style="font-size:0.75rem;">บริษัท</label>
+        <input type="text" class="form-input" id="edit-company" value="${escHtml(m.company || '')}">
+      </div>
+      <div class="form-group" style="margin:0;">
+        <label class="form-label" style="font-size:0.75rem;">ตำแหน่ง</label>
+        <input type="text" class="form-input" id="edit-position" value="${escHtml(m.position || '')}">
+      </div>
+      <div class="form-group" style="margin:0;">
+        <label class="form-label" style="font-size:0.75rem;">สถานะ</label>
+        <select class="form-input" id="edit-status">${sel('status', reg.status)}</select>
+      </div>
+      <div class="form-group" style="margin:0;">
+        <label class="form-label" style="font-size:0.75rem;">สถานะชำระเงิน</label>
+        <select class="form-input" id="edit-payment-status">${selPay(reg.payment_status)}</select>
+      </div>
+      <div class="form-group" style="margin:0; grid-column:1/-1;">
+        <label class="form-label" style="font-size:0.75rem;">วันสมัคร</label>
+        <div style="padding:0.4rem 0; font-size:0.8rem; color:var(--text-muted);">${formatDate(reg.created_at)}</div>
+      </div>
+    </div>
+
+    <div class="form-group" style="margin-bottom:1rem;">
+      <label class="form-label" style="font-size:0.75rem;">Notes (บันทึกภายใน)</label>
+      <textarea class="form-input" id="edit-notes" rows="2"
+        placeholder="บันทึกส่วนตัว เช่น ติดต่อแล้ว, รอยืนยัน..."
+        style="resize:vertical;">${escHtml(reg.notes || '')}</textarea>
+    </div>
+
+    ${reg.slip_url ? `
+      <p style="font-size:0.8rem; font-weight:600; color:var(--text-muted); margin-bottom:0.5rem;">สลิปโอนเงิน</p>
+      <img src="${escHtml(reg.slip_url)}"
+        style="width:100%; border-radius:12px; border:1px solid var(--warm-gray); cursor:pointer; margin-bottom:0.75rem;"
+        onclick="viewSlip('${escHtml(reg.slip_url)}')">
+    ` : ''}
+  `;
+
+  const actionsEl = document.getElementById('modal-member-actions');
+  actionsEl.style.cssText = 'display:flex; gap:0.75rem; margin-top:1.25rem; flex-wrap:wrap; align-items:center;';
+  actionsEl.innerHTML = `
+    <button class="btn btn-blue" id="btn-modal-save" onclick="saveRegistrantChanges()">💾 บันทึก</button>
+    ${reg.payment_status === 'uploaded' ? `<button class="btn btn-green" onclick="confirmPayment('${escHtml(reg.reg_id)}', '${escHtml(m.jaiful_id || '')}')">✓ Confirm Payment</button>` : ''}
+    ${m.phone ? `<a class="btn btn-secondary btn-sm" href="tel:${escHtml(m.phone)}">📞 ${escHtml(m.phone)}</a>` : ''}
+    <button class="btn btn-sm" style="margin-left:auto; background:rgba(224,82,82,0.08); color:var(--error);"
+      onclick="deleteRegistrant()">🗑 ลบผู้สมัครนี้</button>
+  `;
+
+  document.getElementById('modal-member').classList.remove('hidden');
+}
+
+// ════════════════════════════════════════════════════════════
+// SLIP VIEWER
+// ════════════════════════════════════════════════════════════
+function viewSlip(url) {
+  document.getElementById('slip-img-preview').src = url;
+  document.getElementById('slip-download-link').href = url;
+  document.getElementById('modal-slip').classList.remove('hidden');
+}
+
+// ════════════════════════════════════════════════════════════
+// SURVEY DATA
+// ════════════════════════════════════════════════════════════
+async function loadSurveyData() {
+  const container = document.getElementById('survey-data-container');
+  container.innerHTML = `<div class="empty-state"><div class="spinner spinner-blue"></div></div>`;
+
+  try {
+    const [questionsRes, responsesRes] = await Promise.all([
+      db.from('survey_questions')
+        .select('*')
+        .eq('workshop_id', 'claude-123')
+        .eq('survey_type', 'pre')
+        .order('sort_order'),
+      db.from('survey_responses')
+        .select('question_id, answer')
+        .eq('workshop_id', 'claude-123'),
+    ]);
+
+    const questions = questionsRes.data || [];
+    const responses = responsesRes.data || [];
+
+    if (questions.length === 0) {
+      container.innerHTML = `<div class="empty-state"><div class="empty-icon">📋</div><p>ยังไม่มีคำถาม</p></div>`;
+      return;
+    }
+
+    const html = questions.map(q => {
+      const qResponses = responses.filter(r => r.question_id === q.question_id);
+      const totalAns = qResponses.length;
+
+      let dataHtml = `<p style="font-size:0.85rem; color:var(--text-muted);">${totalAns} คำตอบ</p>`;
+
+      if (q.question_type === 'choice' || q.question_type === 'multiple') {
+        const opts = q.options || [];
+        const counts = {};
+        opts.forEach(o => counts[o] = 0);
+        qResponses.forEach(r => {
+          const val = r.answer?.value;
+          if (Array.isArray(val)) val.forEach(v => { if (counts[v] !== undefined) counts[v]++; });
+          else if (counts[val] !== undefined) counts[val]++;
+        });
+        const max = Math.max(...Object.values(counts), 1);
+        dataHtml = opts.map(o => `
+          <div class="survey-chart-bar">
+            <span class="survey-option-label">${escHtml(o)}</span>
+            <div class="survey-bar-wrap">
+              <div class="survey-bar-fill" style="width:${(counts[o]/max)*100}%"></div>
+            </div>
+            <span class="survey-bar-count">${counts[o]}</span>
+          </div>`).join('');
+      } else if (q.question_type === 'open') {
+        const answers = qResponses.map(r => r.answer?.value).filter(Boolean);
+        dataHtml = answers.length === 0
+          ? '<p style="color:var(--text-muted); font-size:0.85rem;">ยังไม่มีคำตอบ</p>'
+          : `<ul style="padding-left:1.25rem;">${answers.slice(0, 10).map(a =>
+              `<li style="font-size:0.875rem; color:var(--text); margin-bottom:0.4rem;">${escHtml(String(a))}</li>`
+            ).join('')}${answers.length > 10 ? `<li style="color:var(--text-muted); font-size:0.8rem;">...และอีก ${answers.length - 10} คำตอบ</li>` : ''}</ul>`;
+      }
+
+      return `
+        <div class="card card-bordered" style="margin-bottom:1rem;">
+          <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:1rem; margin-bottom:1rem; flex-wrap:wrap;">
+            <p style="font-weight:700; color:var(--blue-dark);">${escHtml(q.question_text)}</p>
+            <span class="question-type-badge">${q.question_type}</span>
+          </div>
+          ${dataHtml}
+        </div>`;
+    }).join('');
+
+    container.innerHTML = html;
+  } catch (e) {
+    container.innerHTML = `<div class="empty-state"><div class="empty-icon">⚠️</div><p>โหลดข้อมูลไม่สำเร็จ</p></div>`;
+  }
+}
+
+// ════════════════════════════════════════════════════════════
+// WORKSHOP CONFIG
+// ════════════════════════════════════════════════════════════
+function updateMapPreview(url) {
+  const link = document.getElementById('ws-map-preview');
+  if (!link) return;
+  if (url && url.startsWith('http')) {
+    link.href = url;
+    link.style.display = 'inline';
+  } else {
+    link.style.display = 'none';
+  }
+}
+
+async function loadWorkshopConfig() {
+  const { data } = await db.from('workshops').select('*').eq('workshop_id', 'claude-123').single();
+  if (!data) return;
+
+  document.getElementById('ws-price').value    = data.price || '';
+  document.getElementById('ws-seats').value    = data.max_seats || '';
+  document.getElementById('ws-date').value     = data.date || '';
+  document.getElementById('ws-location').value = data.location || '';
+  document.getElementById('ws-map-url').value  = data.map_url || '';
+  document.getElementById('ws-status').value   = data.status || 'open';
+  updateMapPreview(data.map_url || '');
+}
+
+document.getElementById('btn-save-workshop').addEventListener('click', async () => {
+  const btn = document.getElementById('btn-save-workshop');
+  btn.disabled = true;
+
+  try {
+    await db.from('workshops').update({
+      price:     parseInt(document.getElementById('ws-price').value) || null,
+      max_seats: parseInt(document.getElementById('ws-seats').value) || 10,
+      date:      document.getElementById('ws-date').value || null,
+      location:  document.getElementById('ws-location').value || null,
+      map_url:   document.getElementById('ws-map-url').value || null,
+      status:    document.getElementById('ws-status').value,
+      updated_at: new Date().toISOString(),
+    }).eq('workshop_id', 'claude-123');
+
+    showToast('บันทึกแล้ว ✅', 'success');
+  } catch (e) {
+    showToast('บันทึกไม่สำเร็จ: ' + e.message, 'error');
+  } finally {
+    btn.disabled = false;
+  }
+});
+
+// ════════════════════════════════════════════════════════════
+// SURVEY QUESTIONS BUILDER
+// ════════════════════════════════════════════════════════════
+async function loadQuestions() {
+  const container = document.getElementById('questions-list');
+  container.innerHTML = `<div class="empty-state"><div class="spinner spinner-blue"></div></div>`;
+
+  const { data } = await db
+    .from('survey_questions')
+    .select('*')
+    .eq('workshop_id', 'claude-123')
+    .eq('survey_type', 'pre')
+    .order('sort_order');
+
+  const questions = data || [];
+
+  if (questions.length === 0) {
+    container.innerHTML = `<div class="empty-state"><div class="empty-icon">📋</div><p>ยังไม่มีคำถาม กด "+ เพิ่มคำถาม"</p></div>`;
+    return;
+  }
+
+  container.innerHTML = questions.map((q, i) => `
+    <div class="question-item">
+      <div class="question-item-header">
+        <div style="flex:1;">
+          <div style="font-weight:600; font-size:0.95rem; color:var(--text); margin-bottom:0.3rem;">
+            ${i + 1}. ${escHtml(q.question_text)}
+          </div>
+          ${q.options ? `<div style="font-size:0.8rem; color:var(--text-muted);">${(q.options || []).join(' · ')}</div>` : ''}
+        </div>
+        <div style="display:flex; align-items:center; gap:0.5rem;">
+          <span class="question-type-badge">${q.question_type}</span>
+          ${q.is_required ? '<span style="font-size:0.7rem; color:var(--error); font-weight:700;">บังคับ</span>' : ''}
+          <button class="btn btn-secondary btn-sm" onclick="editQuestion('${q.question_id}')">แก้ไข</button>
+          <button class="btn btn-sm" style="background:rgba(224,82,82,0.1); color:var(--error);"
+            onclick="deleteQuestion('${q.question_id}')">ลบ</button>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+function openAddQuestion() {
+  document.getElementById('modal-q-title').textContent = 'เพิ่มคำถาม';
+  document.getElementById('q-text').value = '';
+  document.getElementById('q-type').value = 'choice';
+  document.getElementById('q-options').value = '';
+  document.getElementById('q-required').checked = true;
+  document.getElementById('q-editing-id').value = '';
+  onQTypeChange();
+  document.getElementById('modal-question').classList.remove('hidden');
+}
+
+async function editQuestion(id) {
+  const { data: q } = await db.from('survey_questions').select('*').eq('question_id', id).single();
+  if (!q) return;
+
+  document.getElementById('modal-q-title').textContent = 'แก้ไขคำถาม';
+  document.getElementById('q-text').value = q.question_text;
+  document.getElementById('q-type').value = q.question_type;
+  document.getElementById('q-options').value = (q.options || []).join('\n');
+  document.getElementById('q-required').checked = q.is_required;
+  document.getElementById('q-editing-id').value = q.question_id;
+  onQTypeChange();
+  document.getElementById('modal-question').classList.remove('hidden');
+}
+
+async function deleteQuestion(id) {
+  if (!confirm('ลบคำถามนี้?')) return;
+  await db.from('survey_questions').delete().eq('question_id', id);
+  showToast('ลบแล้ว');
+  loadQuestions();
+}
+
+function onQTypeChange() {
+  const type = document.getElementById('q-type').value;
+  const wrap = document.getElementById('q-options-wrap');
+  wrap.style.display = (type === 'choice' || type === 'multiple') ? 'block' : 'none';
+}
+
+async function saveQuestion() {
+  const text      = document.getElementById('q-text').value.trim();
+  const type      = document.getElementById('q-type').value;
+  const optText   = document.getElementById('q-options').value;
+  const required  = document.getElementById('q-required').checked;
+  const editingId = document.getElementById('q-editing-id').value;
+
+  if (!text) { showToast('กรุณากรอกคำถาม', 'error'); return; }
+
+  const options = (type === 'choice' || type === 'multiple')
+    ? optText.split('\n').map(s => s.trim()).filter(Boolean)
+    : null;
+
+  const btn = document.getElementById('btn-save-question');
+  btn.disabled = true;
+
+  try {
+    if (editingId) {
+      await db.from('survey_questions').update({
+        question_text: text, question_type: type, options, is_required: required,
+      }).eq('question_id', editingId);
+    } else {
+      const { count } = await db.from('survey_questions')
+        .select('*', { count: 'exact', head: true })
+        .eq('workshop_id', 'claude-123');
+      await db.from('survey_questions').insert({
+        workshop_id: 'claude-123',
+        survey_type: 'pre',
+        question_text: text,
+        question_type: type,
+        options,
+        sort_order: (count || 0) + 1,
+        is_required: required,
+      });
+    }
+
+    showToast('บันทึกแล้ว ✅', 'success');
+    closeModal('modal-question');
+    loadQuestions();
+  } catch (e) {
+    showToast('เกิดข้อผิดพลาด: ' + e.message, 'error');
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+// ════════════════════════════════════════════════════════════
+// MODALS
+// ════════════════════════════════════════════════════════════
+function closeModal(id) {
+  document.getElementById(id).classList.add('hidden');
+}
+
+document.querySelectorAll('.modal-overlay').forEach(overlay => {
+  overlay.addEventListener('click', e => {
+    if (e.target === overlay) overlay.classList.add('hidden');
+  });
+});
+
+// ════════════════════════════════════════════════════════════
+// HELPERS
+// ════════════════════════════════════════════════════════════
+function escHtml(str) {
+  if (typeof str !== 'string') return str || '';
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function formatDate(iso) {
+  if (!iso) return '—';
+  const d = new Date(iso);
+  return d.toLocaleDateString('th-TH', { day: '2-digit', month: 'short', year: '2-digit' }) +
+    ' ' + d.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' });
+}
+
+function statusLabel(s) {
+  const labels = {
+    interested: 'สนใจ', registered: 'สมัครแล้ว', confirmed: 'Confirmed',
+    attended: 'เข้าร่วมแล้ว', cancelled: 'ยกเลิก',
+  };
+  return labels[s] || s;
+}
+
+function paymentLabel(s) {
+  const labels = {
+    pending: 'รอชำระ', uploaded: 'Upload แล้ว',
+    confirmed: 'ยืนยันแล้ว', refunded: 'Refunded',
+  };
+  return labels[s] || s;
+}
+
+// ════════════════════════════════════════════════════════════
+// ACCOUNT MANAGEMENT
+// ════════════════════════════════════════════════════════════
+function loadAccountView() {
+  const user = db.auth.getSession ? null : null; // filled below
+  db.auth.getSession().then(({ data }) => {
+    const email = data?.session?.user?.email || '—';
+    const el = document.getElementById('acct-email');
+    if (el) el.textContent = email;
+  });
+  // clear form
+  ['acct-new-password', 'acct-confirm-password'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  const err = document.getElementById('acct-err');
+  if (err) err.classList.add('hidden');
+}
+
+async function changePassword() {
+  const newPw  = document.getElementById('acct-new-password').value;
+  const confPw = document.getElementById('acct-confirm-password').value;
+  const errBox = document.getElementById('acct-err');
+  const errTxt = document.getElementById('acct-err-text');
+
+  const showErr = (msg) => {
+    errTxt.textContent = msg;
+    errBox.classList.remove('hidden');
+  };
+
+  if (!newPw || newPw.length < 8) return showErr('Password ต้องมีอย่างน้อย 8 ตัวอักษร');
+  if (newPw !== confPw) return showErr('Password ทั้งสองช่องไม่ตรงกัน');
+  errBox.classList.add('hidden');
+
+  const btn = document.getElementById('btn-change-password');
+  btn.disabled = true;
+  btn.textContent = 'กำลังอัปเดต...';
+
+  try {
+    const { error } = await db.auth.updateUser({ password: newPw });
+    if (error) throw error;
+    showToast('เปลี่ยน password แล้ว ✅', 'success');
+    document.getElementById('acct-new-password').value = '';
+    document.getElementById('acct-confirm-password').value = '';
+  } catch (e) {
+    showErr('เกิดข้อผิดพลาด: ' + e.message);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '🔐 อัปเดต Password';
+  }
+}
+
+async function signOutAdmin() {
+  await db.auth.signOut();
+  location.reload();
+}
+
+// ════════════════════════════════════════════════════════════
+// SAVE / DELETE / REFRESH
+// ════════════════════════════════════════════════════════════
+async function saveRegistrantChanges() {
+  const regId    = document.getElementById('modal-reg-id')?.value;
+  const jaifulId = document.getElementById('modal-jaiful-id')?.value;
+  if (!regId || !jaifulId) return;
+
+  const btn = document.getElementById('btn-modal-save');
+  if (btn) { btn.disabled = true; btn.textContent = 'กำลังบันทึก...'; }
+
+  try {
+    await db.from('members').update({
+      full_name:  document.getElementById('edit-fullname').value.trim(),
+      nickname:   document.getElementById('edit-nickname').value.trim(),
+      email:      document.getElementById('edit-email').value.trim(),
+      line_id:    document.getElementById('edit-line-id').value.trim(),
+      company:    document.getElementById('edit-company').value.trim(),
+      position:   document.getElementById('edit-position').value.trim(),
+      updated_at: new Date().toISOString(),
+    }).eq('jaiful_id', jaifulId);
+
+    await db.from('registrations').update({
+      status:         document.getElementById('edit-status').value,
+      payment_status: document.getElementById('edit-payment-status').value,
+      notes:          document.getElementById('edit-notes').value.trim() || null,
+    }).eq('reg_id', regId);
+
+    showToast('บันทึกแล้ว ✅', 'success');
+    closeModal('modal-member');
+    await loadRegistrations();
+    await loadDashboard();
+  } catch (e) {
+    showToast('เกิดข้อผิดพลาด: ' + e.message, 'error');
+    if (btn) { btn.disabled = false; btn.textContent = '💾 บันทึก'; }
+  }
+}
+
+async function deleteRegistrant() {
+  const regId    = document.getElementById('modal-reg-id')?.value;
+  const jaifulId = document.getElementById('modal-jaiful-id')?.value;
+  if (!regId) return;
+
+  if (!confirm('ลบผู้สมัครนี้ออกจาก workshop?\nข้อมูล survey ของคนนี้จะถูกลบด้วย')) return;
+
+  try {
+    await db.from('survey_responses')
+      .delete().eq('jaiful_id', jaifulId).eq('workshop_id', 'claude-123');
+    await db.from('registrations').delete().eq('reg_id', regId);
+
+    showToast('ลบแล้ว', 'success');
+    closeModal('modal-member');
+    await loadRegistrations();
+    await loadDashboard();
+  } catch (e) {
+    showToast('ลบไม่สำเร็จ: ' + e.message, 'error');
+  }
+}
+
+function refreshCurrentView() {
+  const active = document.querySelector('.nav-item.active');
+  const view   = active?.dataset?.view || 'dashboard';
+  const fns = {
+    dashboard: loadDashboard,
+    registrations: loadRegistrations,
+    survey: loadSurveyData,
+    workshop: loadWorkshopConfig,
+    questions: loadQuestions,
+  };
+  if (fns[view]) fns[view]();
+}
+
+// ── Start ──
+init();
+</script>
+</body>
+</html>

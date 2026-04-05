@@ -1,0 +1,12 @@
+{
+  "projects": {
+    "default": "jaiful-ai"
+  },
+  "targets": {
+    "jaiful-ai": {
+      "hosting": {
+        "jaiful": ["jaiful"]
+      }
+    }
+  }
+}

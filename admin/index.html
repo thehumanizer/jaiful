@@ -1959,7 +1959,9 @@ async function deleteRegistrant() {
   const jaifulId = document.getElementById('modal-jaiful-id')?.value;
   if (!regId) return;
 
-  if (!confirm('ลบผู้สมัครนี้ออกจาก workshop?\nข้อมูล survey ของคนนี้จะถูกลบด้วย')) return;
+  const typed = prompt('⚠️ ยืนยันการลบผู้สมัครนี้\n\nข้อมูล survey ของคนนี้จะถูกลบด้วย และไม่สามารถกู้คืนได้\n\nพิมพ์  ลบ  เพื่อยืนยัน:');
+  if (typed === null) return;
+  if (typed.trim() !== 'ลบ') { showToast('พิมพ์ไม่ตรง — ยกเลิกการลบ', 'error'); return; }
 
   try {
     await db.from('survey_responses')

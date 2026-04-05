@@ -89,6 +89,12 @@
       font-size: 0.95rem;
       text-decoration: none;
       transition: color 0.2s;
+      white-space: nowrap;
+    }
+
+    @media (max-width: 480px) {
+      .nav-links { gap: 0.875rem; }
+      .nav-links a { font-size: 0.8rem; }
     }
 
     .nav-links a:hover { color: white; }
@@ -485,7 +491,7 @@
       <h1 class="hero-title" style="text-align:left;">
         พาติดปีก AI<br><span class="accent">ไปด้วยกัน</span>
       </h1>
-      <img src="/wing.png" alt="" class="hero-wing">
+      <img src="/wing.png" alt="" class="hero-wing" onerror="this.style.display='none'">
     </div>
     <p class="hero-sub">
       ใครที่เคยงงๆ กับ AI เหมือนกัน — ไม่รู้ว่าจะเริ่มยังไงดี<br>
@@ -549,6 +555,13 @@
             <div>
               <div class="meta-label">ราคา</div>
               <div class="meta-value gold ws-price-dynamic">3,500 บาท</div>
+            </div>
+          </div>
+          <div class="meta-item" id="ws-location-item" style="display:none;">
+            <span class="meta-icon">📍</span>
+            <div>
+              <div class="meta-label">สถานที่</div>
+              <div class="meta-value" id="ws-location-text">—</div>
             </div>
           </div>
         </div>
@@ -784,6 +797,12 @@
           document.querySelectorAll('.ws-date-dynamic').forEach(el => {
             el.textContent = dateStr;
           });
+        }
+
+        // Show location if set
+        if (workshop.location) {
+          document.getElementById('ws-location-text').textContent = workshop.location;
+          document.getElementById('ws-location-item').style.display = '';
         }
       }
     } catch (e) {

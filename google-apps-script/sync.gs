@@ -66,6 +66,14 @@ function _applyHeaders(sheet, headers) {
     'สถานะสมาชิก': 120, 'JAI': 70, 'วันที่สมัครครั้งแรก': 150,
     'reg_id': 0  // hidden
   };
+  // Force text format for phone/ID columns (ป้องกัน 0 นำหน้าหาย)
+  const textCols = ['เบอร์โทร', 'JAIFUL ID', 'LINE ID', 'reg_id'];
+  headers.forEach((h, i) => {
+    if (textCols.includes(h)) {
+      sheet.getRange(1, i + 1, sheet.getMaxRows(), 1).setNumberFormat('@');
+    }
+  });
+
   headers.forEach((h, i) => {
     if (widths[h] !== undefined) {
       const col = i + 1;

@@ -1,0 +1,45 @@
+# JAIFUL — พาติดปีก AI ไปด้วยกัน
+> ใช้ AI ให้ใจฟู — JAI + AI = JAIFUL
+
+JAIFUL เป็นแบรนด์ AI workshop และชุมชนการเรียนรู้ AI สำหรับคนทำงานทั่วไปในประเทศไทย
+ก่อตั้งโดย Benz Varman (นักพูด, AI Trainer, Bangkok) ภายใต้ The Humanizer ecosystem
+
+## เราคือใคร
+
+JAIFUL (ใจฟู) มาจาก JAI (ใจ / 4J Framework) + AI
+เชื่อว่า AI ที่ดีที่สุดไม่ใช่ AI ที่ฉลาดที่สุด — แต่คือ AI ที่คืนเวลาให้คุณกลับมา "ใจ" กับคนรอบข้างได้มากขึ้น
+
+4J Framework:
+- JUMP: พาคนข้ามกำแพงเทคนิค ค้นพบความเป็นไปได้ใหม่ๆ
+- JOY: ใช้ AI เสกไอเดียและความฝันให้เป็นจริง
+- JOIN: ใช้ AI เป็นกาวใจ เชื่อมความสัมพันธ์ระหว่างคน
+- JOURNEY: เรียนรู้และเติบโตไปพร้อมกับ AI ไม่ใช่แข่งกัน
+
+## Workshop ปัจจุบัน
+
+### Claude 123 🪽
+Workshop Full Day สอนใช้ Claude AI สำหรับคนทำงานทั่วไป
+- ระดับ: Beginner (ไม่ต้องมีพื้นฐาน ไม่ต้องเขียนโค้ด)
+- รูปแบบ: Offline, กรุงเทพมหานคร
+- เวลา: Full Day 09:00–17:30
+- ขนาดกลุ่ม: ไม่เกิน 10 คน (กลุ่มเล็กๆ ดูแลกันได้เต็มที่)
+- รวมอาหารกลางวัน
+- สมัคร: https://jaiful.web.app/claude-123
+
+สิ่งที่จะได้เรียน:
+- เข้าใจ Claude จริงๆ — ไม่ใช่แค่ copy prompt
+- ฝึกใช้กับงานจริงของตัวเอง ทำได้เลยหลังเรียน
+- เข้า JAIFUL Family — ชุมชน support กันต่อหลังเรียนจบ
+
+## ติดต่อ
+
+- เว็บไซต์: https://jaiful.web.app
+- อีเมล: bnzaza@gmail.com
+- โทร: 095-915-9149
+- ผู้ก่อตั้ง: Benz Varman, MD — The Humanizer (https://humanizer.web.app)
+
+## หน้าสำคัญ
+
+- [หน้าหลัก](https://jaiful.web.app/)
+- [เกี่ยวกับ JAIFUL](https://jaiful.web.app/about)
+- [สมัคร Claude 123](https://jaiful.web.app/claude-123)

@@ -134,6 +134,30 @@
       display: block;
     }
 
+    .lookup-result.duplicate {
+      background: rgba(224,82,82,0.08);
+      border: 1.5px solid rgba(224,82,82,0.3);
+      border-radius: var(--radius-sm);
+      color: #b83232;
+      display: block;
+    }
+
+    .duplicate-confirm-btns {
+      display: flex; gap: 0.6rem; margin-top: 0.75rem;
+    }
+    .btn-confirm-update {
+      background: var(--blue); color: white;
+      border: none; border-radius: 8px;
+      padding: 0.45rem 1rem; font-size: 0.85rem;
+      font-weight: 600; cursor: pointer; font-family: inherit;
+    }
+    .btn-cancel-update {
+      background: transparent; color: var(--gray);
+      border: 1.5px solid #ddd; border-radius: 8px;
+      padding: 0.45rem 1rem; font-size: 0.85rem;
+      cursor: pointer; font-family: inherit;
+    }
+
     /* ── Payment option cards ── */
     .payment-options {
       display: flex;
@@ -588,10 +612,12 @@ const db = createClient(JAIFUL_CONFIG.supabase.url, JAIFUL_CONFIG.supabase.anonK
 const state = {
   currentStep: 1,
   totalSteps: 4,
-  existingJaifulId: null,  // if returning user found
+  existingJaifulId: null,      // if returning user found
+  existingRegistration: null,  // existing registration for claude-123 (if any)
+  confirmedDuplicate: false,   // user explicitly confirmed they want to update
   surveyQuestions: [],
-  surveyAnswers: {},       // { question_id: answer }
-  paymentChoice: null,     // 'pay' | 'interest'
+  surveyAnswers: {},            // { question_id: answer }
+  paymentChoice: null,          // 'pay' | 'interest'
   slipFile: null,
   workshopPrice: 3500,     // updated from DB on load
 };
@@ -687,7 +713,7 @@ async function lookupUser() {
       .maybeSingle();
 
     if (data) {
-      // Auto-fill
+      // Auto-fill fields
       document.getElementById('full-name').value = data.full_name || '';
       document.getElementById('nickname').value  = data.nickname || '';
       document.getElementById('phone').value     = data.phone || phone;
@@ -697,10 +723,45 @@ async function lookupUser() {
       document.getElementById('position').value  = data.position || '';
 
       state.existingJaifulId = data.jaiful_id;
+      state.confirmedDuplicate = false;
+
+      // Check for existing registration
+      const { data: reg } = await db
+        .from('registrations')
+        .select('reg_id, status, payment_status, created_at')
+        .eq('jaiful_id', data.jaiful_id)
+        .eq('workshop_id', 'claude-123')
+        .maybeSingle();
+
+      state.existingRegistration = reg || null;
 
       const result = document.getElementById('lookup-result');
-      result.className = 'lookup-result found';
-      result.innerHTML = `✅ เจอแล้ว! สวัสดีกลับมา <strong>${data.nickname || data.full_name}</strong> — ข้อมูลขึ้นมาแล้ว ตรวจสอบและแก้ไขได้เลย`;
+
+      if (reg) {
+        // ⚠️ Already registered — show warning + confirm
+        const statusLabel = {
+          interested: 'สนใจ (รอติดต่อกลับ)',
+          registered:  'สมัครแล้ว (รอยืนยันการชำระ)',
+          confirmed:   'ยืนยันแล้ว ✅',
+          attended:    'เข้าร่วมแล้ว ✅',
+          cancelled:   'ยกเลิกแล้ว',
+        }[reg.status] || reg.status;
+
+        const regDate = new Date(reg.created_at).toLocaleDateString('th-TH', { day: 'numeric', month: 'long', year: 'numeric' });
+
+        result.className = 'lookup-result duplicate';
+        result.innerHTML = `
+          ⚠️ เราเจอข้อมูลคุณในระบบแล้ว — <strong>${data.nickname || data.full_name}</strong><br>
+          <span style="font-size:0.82rem; opacity:0.85;">สมัคร Claude 123 เมื่อ ${regDate} · สถานะ: ${statusLabel}</span><br>
+          <span style="font-size:0.82rem;">ต้องการ <strong>อัปเดตการสมัคร</strong> หรือเปล่า?</span>
+          <div class="duplicate-confirm-btns">
+            <button class="btn-confirm-update" onclick="confirmDuplicateUpdate()">ใช่ อัปเดตเลย</button>
+            <button class="btn-cancel-update" onclick="cancelDuplicateUpdate()">ไม่ใช่ ยกเลิก</button>
+          </div>`;
+      } else {
+        result.className = 'lookup-result found';
+        result.innerHTML = `✅ เจอแล้ว! สวัสดีกลับมา <strong>${data.nickname || data.full_name}</strong> — ข้อมูลขึ้นมาแล้ว ตรวจสอบและแก้ไขได้เลย`;
+      }
     } else {
       // Auto-populate searched phone into the main phone field
       document.getElementById('phone').value = phone;
@@ -714,6 +775,27 @@ async function lookupUser() {
   } finally {
     setLoading(btn, false);
   }
+}
+
+function confirmDuplicateUpdate() {
+  state.confirmedDuplicate = true;
+  const result = document.getElementById('lookup-result');
+  result.className = 'lookup-result found';
+  result.innerHTML = `✅ รับทราบแล้ว — จะอัปเดตการสมัครเดิมของคุณ ตรวจสอบข้อมูลด้านล่างแล้วดำเนินการต่อได้เลย`;
+}
+
+function cancelDuplicateUpdate() {
+  state.existingJaifulId = null;
+  state.existingRegistration = null;
+  state.confirmedDuplicate = false;
+  // Clear auto-filled fields
+  ['full-name','nickname','phone','email','line-id','company','position']
+    .forEach(id => { document.getElementById(id).value = ''; });
+  document.getElementById('lookup-phone').value = '';
+  const result = document.getElementById('lookup-result');
+  result.className = 'lookup-result';
+  result.innerHTML = '';
+  showToast('ยกเลิกแล้ว — กรอกเบอร์ใหม่หรือดำเนินการต่อได้เลย');
 }
 
 // ════════════════════════════════════════════════════════════
@@ -1037,6 +1119,13 @@ document.getElementById('btn-submit').addEventListener('click', submitForm);
 
 async function submitForm() {
   if (!validateStep4()) return;
+
+  // Guard: ถ้าเจอ registration เดิมแต่ยังไม่กด confirm
+  if (state.existingRegistration && !state.confirmedDuplicate) {
+    showToast('กรุณายืนยันก่อนว่าต้องการอัปเดตการสมัครเดิม', 'error');
+    document.getElementById('lookup-result').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return;
+  }
 
   document.getElementById('submit-overlay').classList.add('active');
 

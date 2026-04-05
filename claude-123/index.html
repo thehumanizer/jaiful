@@ -1098,7 +1098,16 @@ async function submitForm() {
       slipUrl = urlData.publicUrl;
     }
 
-    // ── 3. Create registration ──
+    // ── 3. Create registration (check duplicate first) ──
+    const { data: existing } = await db
+      .from('registrations')
+      .select('reg_id, status')
+      .eq('jaiful_id', jaifulId)
+      .eq('workshop_id', 'claude-123')
+      .maybeSingle();
+
+    const isDuplicate = !!existing;
+
     const regStatus     = state.paymentChoice === 'pay' ? 'registered' : 'interested';
     const paymentStatus = state.paymentChoice === 'pay' ? 'uploaded' : 'pending';
 
@@ -1111,6 +1120,9 @@ async function submitForm() {
         payment_status: paymentStatus,
         payment_amount: state.paymentChoice === 'pay' ? state.workshopPrice : null,
         slip_url: slipUrl,
+        notes: isDuplicate
+          ? `[สมัครซ้ำ ${new Date().toLocaleDateString('th-TH')}]`
+          : null,
       }, { onConflict: 'jaiful_id,workshop_id' })
       .select('reg_id')
       .single();
